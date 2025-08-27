@@ -23,34 +23,43 @@ async def main(page: ft.Page):
     
     def on_chat(msg):
         chat.controls.append(
-            ft.Text(f"[CHAT] {msg.user.name}: {msg.text}", font_family="plex medium")
+            ft.Text(f"[CHAT] {msg.user.name}: {msg.text}", font_family="plex medium", color=ft.Colors.GREEN_400)
         )
         page.update()
     
     async def on_ready():
-        
         status_icon.name = ft.Icons.RADIO_BUTTON_ON
         status_icon.color = ft.Colors.GREEN_700
         
-        info = await bot.get_stream()
-        if type(info) == dict:
-            stream_status.value = info["status"]
-            stream_viewers.value = info["viewer_count"]
-            stream_title.value = info["title"]
-            stream_game.value = info["game_name"]
-            
-            first_divider.visible = True
-            second_divider.visible = True
-        else:
-            stream_status.value = ""
-            stream_viewers.value = ""
-            stream_title.value = ""
-            stream_game.value = ""
-            
-            first_divider.visible = False
-            second_divider.visible = False
-            
+        start_button.disabled = False
+        
+        asyncio.create_task(get_stream())
+        
         page.update()
+
+    async def get_stream():
+        nonlocal bot_status
+        while bot_status:
+            info = await bot.get_stream()
+            if type(info) == dict:
+                stream_status.value = f"Статус: {info["status"]}"
+                stream_viewers.value = f"Зрители: {info["viewer_count"]}"
+                stream_title.value = f"Заголовок: {info["title"]}"
+                stream_game.value = f"Категория: {info["game_name"]}"
+                
+                first_divider.visible = True
+                second_divider.visible = True
+            else:
+                stream_status.value = ""
+                stream_viewers.value = ""
+                stream_title.value = ""
+                stream_game.value = ""
+                
+                first_divider.visible = False
+                second_divider.visible = False
+            page.update()
+            await asyncio.sleep(60)
+            
         
     bot.add_message_callback(on_chat)
     bot.add_ready_callback(on_ready)
@@ -65,12 +74,13 @@ async def main(page: ft.Page):
             await bot.stop()
         else:
             start_button.text = "Остановить бота"
+            start_button.disabled = True
             bot_status = True
             asyncio.create_task(bot.run())
             
         page.update()
     
-    start_button = ft.ElevatedButton("Запустить бота", on_click=start)
+    start_button = ft.ElevatedButton("Запустить бота", on_click=start, disabled=False)
     status_icon = ft.Icon(ft.Icons.RADIO_BUTTON_OFF, color=ft.Colors.RED_700)
     
     stream_status = ft.Text(font_family="notosans", size=16,text_align=ft.TextAlign.START)
@@ -80,7 +90,6 @@ async def main(page: ft.Page):
     
     chat = ft.Column(
         controls=[],
-        alignment=ft.MainAxisAlignment.START,
         scroll=ft.ScrollMode.AUTO,
         expand=True
     )

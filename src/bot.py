@@ -4,6 +4,9 @@ from twitchAPI.type import AuthScope, ChatEvent
 from twitchAPI.chat import Chat, EventData, ChatMessage, ChatCommand
 import asyncio
 
+import random
+import time
+
 from utils.logger import LogManager
 
 from cfg import CLIENT_ID, CLIENT_SECRET, CHANNEL, TOKEN, REFRESH_TOKEN, LOG_PATH
@@ -12,6 +15,7 @@ class Bot:
     def __init__(self):
         self.USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT]
         self.log = LogManager(LOG_PATH).logger
+        
         self._message_callbacks = []
         self._ready_callbacks = []
         
@@ -52,8 +56,13 @@ class Bot:
 
         self.chat.register_command('тг', self.tg_command_handler)
         self.chat.register_command('гайд', self.guide_command_handler)
+        self.chat.register_command('мейн', self.main_command_handler)
         
-        self.chat.register_command('test', self.test_handler)
+        self.chat.register_command('маркиз', self.mrmarkis_command_handler)
+        
+        self.chat.register_command('flip', self.flip_command_handler)
+        self.chat.register_command('roll', self.roll_command_handler)
+        self.chat.register_command('шар', self.ball_command_handler)
 
         self.chat.start()
         
@@ -91,6 +100,28 @@ class Bot:
             except Exception as e:
                 self.log.error(f"Ошибка в callback {cb}: {e}")
 
+    def cooldown(seconds=10, per_user=True):
+        def wrapper(func):
+            async def inner(self, cmd: ChatCommand, *args, **kwargs):
+                key = (cmd.user.name, func.__name__) if per_user else func.__name__
+                now = time.time()
+                
+                if not hasattr(self, "_cooldowns"):
+                    self._cooldowns = {}
+
+                last_used = self._cooldowns.get(key, 0)
+                if now - last_used < seconds:
+                    wait = round(seconds - (now - last_used), 1)
+                    await cmd.reply(f"Подожди {wait} сек!")
+                    return
+                
+                self._cooldowns[key] = now
+                
+                return await func(self, cmd, *args, **kwargs)
+            return inner
+        return wrapper
+
+    @cooldown(10, True)
     async def tg_command_handler(self, cmd: ChatCommand):
         if len(cmd.parameter) == 0:
             await cmd.reply("https://t.me/alaquu")
@@ -99,15 +130,32 @@ class Bot:
                 for _ in range(int(cmd.parameter)):
                     await cmd.reply("https://t.me/alaquu")
             else:
-                await cmd.reply("дохуя просишь братик) https://t.me/alaquu")
-        
+                await cmd.reply("Дохуя просишь братик) https://t.me/alaquu")
+    
+    @cooldown(10, True)  
     async def guide_command_handler(self, cmd: ChatCommand):
-        await cmd.reply(f"Гайд на кеза и тинкера - https://t.me/alaquu/460")
-        
-    async def test_handler(self, cmd: ChatCommand):
-        info = await self.get_stream()
-        if type(info) == dict:
-            await cmd.reply(info)
+        await cmd.reply("Гайд на кеза и тинкера - https://t.me/alaquu/460")
+    
+    @cooldown(10, True)
+    async def main_command_handler(self, cmd: ChatCommand):
+        await cmd.reply("Мейн егора - https://steamcommunity.com/profiles/76561198993439266")
+    
+    @cooldown(10, True)
+    async def mrmarkis_command_handler(self, cmd: ChatCommand):
+        await cmd.reply("https://t.me/+cVieT2VQ3cExNTky")
+    
+    @cooldown(10, True)
+    async def flip_command_handler(self, cmd: ChatCommand):
+        await cmd.reply(random.choice(["Орёл", "Решка"]))
+    
+    @cooldown(10, True)
+    async def roll_command_handler(self, cmd: ChatCommand):
+        await cmd.reply(random.randint(0, 100))
+    
+    @cooldown(10, True)
+    async def ball_command_handler(self, cmd: ChatCommand):
+        if len(cmd.parameter) == 0:
+            await cmd.reply("Напиши вопрос!")
         else:
-            await cmd.reply(info)
+            await cmd.reply(random.choice(["Да", "Нет", "Наверное", "Сомневаюсь", "Точно да", "Точно нет", "Неуверен"]))
         
