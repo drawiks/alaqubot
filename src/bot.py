@@ -4,6 +4,8 @@ from twitchAPI.type import AuthScope, ChatEvent
 from twitchAPI.chat import Chat, EventData, ChatMessage, ChatCommand
 import asyncio
 
+from collections import defaultdict
+from operator import itemgetter
 import random
 import time
 
@@ -15,7 +17,7 @@ class Bot:
     def __init__(self):
         self.USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT]
         self.log = LogManager(LOG_PATH).logger
-        
+        self._message_count = defaultdict(int)
         self._message_callbacks = []
         self._ready_callbacks = []
         
@@ -57,8 +59,11 @@ class Bot:
         self.chat.register_command('тг', self.tg_command_handler)
         self.chat.register_command('гайд', self.guide_command_handler)
         self.chat.register_command('мейн', self.main_command_handler)
+        self.chat.register_command('топ', self.top_command_handler)
+        self.chat.register_command('команды', self.commands_command_handler)
         
         self.chat.register_command('маркиз', self.mrmarkis_command_handler)
+        self.chat.register_command('пизденка', self.pizdenka_command_handler)
         
         self.chat.register_command('flip', self.flip_command_handler)
         self.chat.register_command('roll', self.roll_command_handler)
@@ -91,6 +96,8 @@ class Bot:
     async def on_message(self, msg: ChatMessage):
         self.log.debug(f"in {msg.room.name}, {msg.user.name} said: {msg.text}")
         
+        self._message_count[msg.user.name] += 1
+        
         for cb in self._message_callbacks:
             try:
                 if asyncio.iscoroutinefunction(cb):
@@ -100,7 +107,7 @@ class Bot:
             except Exception as e:
                 self.log.error(f"Ошибка в callback {cb}: {e}")
 
-    def cooldown(seconds=10, per_user=True):
+    def cooldown(seconds=30, per_user=True):
         def wrapper(func):
             async def inner(self, cmd: ChatCommand, *args, **kwargs):
                 key = (cmd.user.name, func.__name__) if per_user else func.__name__
@@ -122,6 +129,10 @@ class Bot:
         return wrapper
 
     @cooldown(10, True)
+    async def commands_command_handler(self, cmd: ChatCommand):
+        await cmd.reply("!тг, !гайд, !мейн, !маркиз, !flip, !roll, !шар (вопрос)")
+    
+    @cooldown(30, True)
     async def tg_command_handler(self, cmd: ChatCommand):
         if len(cmd.parameter) == 0:
             await cmd.reply("https://t.me/alaquu")
@@ -132,30 +143,48 @@ class Bot:
             else:
                 await cmd.reply("Дохуя просишь братик) https://t.me/alaquu")
     
-    @cooldown(10, True)  
+    @cooldown(30, True)  
     async def guide_command_handler(self, cmd: ChatCommand):
         await cmd.reply("Гайд на кеза и тинкера - https://t.me/alaquu/460")
     
-    @cooldown(10, True)
+    @cooldown(30, True)
     async def main_command_handler(self, cmd: ChatCommand):
         await cmd.reply("Мейн егора - https://steamcommunity.com/profiles/76561198993439266")
     
-    @cooldown(10, True)
+    @cooldown(30, True)
     async def mrmarkis_command_handler(self, cmd: ChatCommand):
         await cmd.reply("https://t.me/+cVieT2VQ3cExNTky")
+        
+    @cooldown(30, True)
+    async def pizdenka_command_handler(self, cmd: ChatCommand):
+        await cmd.reply("'А ВОТ БЫЛ БЫ АСПЕКТ ДРУГОЙ СГОРЕЛА БЫ' Похотливая. П 1104 год д.н.эры")
     
-    @cooldown(10, True)
+    @cooldown(30, True)
     async def flip_command_handler(self, cmd: ChatCommand):
         await cmd.reply(random.choice(["Орёл", "Решка"]))
     
-    @cooldown(10, True)
+    @cooldown(30, True)
     async def roll_command_handler(self, cmd: ChatCommand):
         await cmd.reply(random.randint(0, 100))
     
-    @cooldown(10, True)
+    @cooldown(30, True)
     async def ball_command_handler(self, cmd: ChatCommand):
         if len(cmd.parameter) == 0:
             await cmd.reply("Напиши вопрос!")
         else:
             await cmd.reply(random.choice(["Да", "Нет", "Наверное", "Сомневаюсь", "Точно да", "Точно нет", "Неуверен"]))
+    
+    @cooldown(60, True)
+    async def top_command_handler(self, cmd: ChatCommand):
+        if not self._message_count:
+            await cmd.reply("Пока никто не писал сообщений")
+            return
+        
+        top_users = sorted(self._message_count.items(), key=itemgetter(1), reverse=True)[:5]
+        
+        top_text = "Лучшие:\n"
+        for _, (user, count) in enumerate(top_users, start=1):
+            top_text += f"({_}) {user} — {count}\n"
+        
+        await cmd.reply(top_text)
         
