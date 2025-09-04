@@ -49,6 +49,9 @@ async def main(page: ft.Page):
                 
                 first_divider.visible = True
                 second_divider.visible = True
+                
+                bot_message_field.visible = True
+                bot_message_button.visible = True
             else:
                 stream_status.value = ""
                 stream_viewers.value = ""
@@ -57,6 +60,9 @@ async def main(page: ft.Page):
                 
                 first_divider.visible = False
                 second_divider.visible = False
+                
+                bot_message_field.visible = False
+                bot_message_button.visible = False
             page.update()
             await asyncio.sleep(60)
             
@@ -79,6 +85,11 @@ async def main(page: ft.Page):
             asyncio.create_task(bot.run())
             
         page.update()
+        
+    async def bot_message(e):
+        await bot.send_message(str(bot_message_field.value))
+        bot_message_field.value = None
+        page.update()
     
     start_button = ft.ElevatedButton("Запустить бота", on_click=start, disabled=False)
     status_icon = ft.Icon(ft.Icons.RADIO_BUTTON_OFF, color=ft.Colors.RED_700)
@@ -87,6 +98,9 @@ async def main(page: ft.Page):
     stream_viewers = ft.Text(font_family="notosans", size=16, text_align=ft.TextAlign.START)
     stream_title = ft.Text(font_family="notosans", size=16, text_align=ft.TextAlign.START)
     stream_game = ft.Text(font_family="notosans", size=16, text_align=ft.TextAlign.START)
+    
+    bot_message_field = ft.TextField(label="Message", visible=False, width=120)
+    bot_message_button = ft.ElevatedButton("Отправить", on_click=bot_message, visible=False, width=120)
     
     chat = ft.Column(
         controls=[],
@@ -118,17 +132,33 @@ async def main(page: ft.Page):
                 chat,
                 ft.Column(
                     controls=[
-                        ft.Row(
-                            [
-                                ft.Text("Статус: ", font_family="plex bold"),
-                                status_icon,
+                        ft.Column(
+                            controls=[
+                                bot_message_field,
+                                bot_message_button
                             ],
-                            alignment=ft.MainAxisAlignment.END
+                            alignment=ft.MainAxisAlignment.START,
+                            horizontal_alignment=ft.CrossAxisAlignment.END,
+                            expand=True
                         ),
-                        start_button
+                        ft.Column(
+                            controls=[
+                                ft.Row(
+                                    [
+                                        ft.Text("Статус: ", font_family="plex bold"),
+                                        status_icon,
+                                    ],
+                                    alignment=ft.MainAxisAlignment.END
+                                ),
+                                start_button,
+                            ],
+                            alignment=ft.MainAxisAlignment.END,
+                            horizontal_alignment=ft.CrossAxisAlignment.END,
+                            expand=True
+                        )
                         ],
-                    alignment=ft.MainAxisAlignment.END,
-                    horizontal_alignment=ft.CrossAxisAlignment.END,
+                    #alignment=ft.MainAxisAlignment.END,
+                    #horizontal_alignment=ft.CrossAxisAlignment.END,
                     expand=True
                 ),
             ],

@@ -2,16 +2,18 @@ from twitchAPI.twitch import Twitch
 from twitchAPI.oauth import UserAuthenticator
 from twitchAPI.type import AuthScope, ChatEvent
 from twitchAPI.chat import Chat, EventData, ChatMessage, ChatCommand
-import asyncio
 
 from collections import defaultdict
-from operator import itemgetter
-import random
-import time
+import asyncio, aiohttp, random, time, re
+
+from g4f.client import Client, AsyncClient
+from translate import Translator
+
+from config import CLIENT_ID, CLIENT_SECRET, CHANNEL, TOKEN, REFRESH_TOKEN, LOG_PATH
+from build import BOOTS, ITEMS
+from heroes import HEROES
 
 from utils.logger import LogManager
-
-from cfg import CLIENT_ID, CLIENT_SECRET, CHANNEL, TOKEN, REFRESH_TOKEN, LOG_PATH
         
 class Bot:
     def __init__(self):
@@ -58,19 +60,21 @@ class Bot:
 
         self.chat.register_command('тг', self.tg_command_handler)
         self.chat.register_command('гайд', self.guide_command_handler)
+        self.chat.register_command('герой', self.hero_command_handler)
+        self.chat.register_command('билд', self.build_command_handler)
         self.chat.register_command('мейн', self.main_command_handler)
-        self.chat.register_command('топ', self.top_command_handler)
         self.chat.register_command('команды', self.commands_command_handler)
         
-        self.chat.register_command('маркиз', self.mrmarkis_command_handler)
-        self.chat.register_command('пизденка', self.pizdenka_command_handler)
+        self.chat.register_command('гпт', self.gpt_command_handler)
+        self.chat.register_command('арт', self.art_command_handler)
+        self.chat.register_command('перевод', self.translate_command_handler)
         
         self.chat.register_command('flip', self.flip_command_handler)
         self.chat.register_command('roll', self.roll_command_handler)
         self.chat.register_command('шар', self.ball_command_handler)
 
         self.chat.start()
-        
+     
     async def stop(self):
         if self.chat:
             self.chat.stop()
@@ -107,9 +111,65 @@ class Bot:
             except Exception as e:
                 self.log.error(f"Ошибка в callback {cb}: {e}")
 
+    async def send_message(self, text):
+        await self.chat.send_message(CHANNEL, text)
+    
+    def split_message(self, text: str, limit: int = 500, max_parts: int = 2) -> list[str]:
+        parts = []
+        while len(text) > limit and len(parts) < max_parts - 1:
+            split_at = text.rfind(" ", 0, limit)
+            if split_at == -1:
+                split_at = limit
+            parts.append(text[:split_at].strip())
+            text = text[split_at:].strip()
+        if text:
+            if len(text) > limit:
+                text = text[:limit - 3] + "..."
+            parts.append(text)
+
+        return parts
+
+    async def generate_text(self, prompt: str):
+        client = Client()
+        response = client.chat.completions.create(
+            model="deepseek-v3",  # Try "gpt-4.1", "gpt-4o", "deepseek-v3", etc.
+            messages=[{"role": "user", "content": prompt}],
+            web_search=True
+        )
+        text = response.choices[0].message.content
+        text = re.sub(r'(\*\*|\*|`|\#\#\#)', '', text)
+        
+        return text
+    
+    async def shorten_url(self, url: str) -> str:
+        api = f"http://tinyurl.com/api-create.php?url={url}"
+        async with aiohttp.ClientSession() as session:
+            async with session.get(api) as response:
+                return await response.text()
+    
+    async def generate_art(self, prompt: str):
+        client = AsyncClient()
+        response = await client.images.generate(
+            prompt=prompt,
+            model="flux",
+            response_format="url"
+        )
+        
+        return await self.shorten_url(response.data[0].url)
+    
+    async def translate(self, text: str, lang: str):
+        translated = Translator(to_lang=lang, from_lang="ru").translate(text)
+        if len(translated) > 500:
+            translated = translated[:497] + "..."
+        return translated
+    
     def cooldown(seconds=30, per_user=True):
+        ignore_users = ["drawksr69", "alaqu1337"]
         def wrapper(func):
             async def inner(self, cmd: ChatCommand, *args, **kwargs):
+                if cmd.user.name in ignore_users:
+                    return await func(self, cmd, *args, **kwargs)
+                
                 key = (cmd.user.name, func.__name__) if per_user else func.__name__
                 now = time.time()
                 
@@ -130,7 +190,7 @@ class Bot:
 
     @cooldown(10, True)
     async def commands_command_handler(self, cmd: ChatCommand):
-        await cmd.reply("!тг, !гайд, !мейн, !маркиз, !flip, !roll, !шар (вопрос)")
+        await cmd.reply("!тг, !гайд, !герой, !билд, !мейн, !гпт (запрос), !арт (запрос), !flip, !roll, !шар (вопрос)")
     
     @cooldown(30, True)
     async def tg_command_handler(self, cmd: ChatCommand):
@@ -149,15 +209,7 @@ class Bot:
     
     @cooldown(30, True)
     async def main_command_handler(self, cmd: ChatCommand):
-        await cmd.reply("Мейн егора - https://steamcommunity.com/profiles/76561198993439266")
-    
-    @cooldown(30, True)
-    async def mrmarkis_command_handler(self, cmd: ChatCommand):
-        await cmd.reply("https://t.me/+cVieT2VQ3cExNTky")
-        
-    @cooldown(30, True)
-    async def pizdenka_command_handler(self, cmd: ChatCommand):
-        await cmd.reply("'А ВОТ БЫЛ БЫ АСПЕКТ ДРУГОЙ СГОРЕЛА БЫ' Похотливая. П 1104 год д.н.эры")
+        await cmd.reply("Мейн Егора - https://steamcommunity.com/profiles/76561198993439266")
     
     @cooldown(30, True)
     async def flip_command_handler(self, cmd: ChatCommand):
@@ -172,19 +224,41 @@ class Bot:
         if len(cmd.parameter) == 0:
             await cmd.reply("Напиши вопрос!")
         else:
-            await cmd.reply(random.choice(["Да", "Нет", "Наверное", "Сомневаюсь", "Точно да", "Точно нет", "Неуверен"]))
-    
-    @cooldown(60, True)
-    async def top_command_handler(self, cmd: ChatCommand):
-        if not self._message_count:
-            await cmd.reply("Пока никто не писал сообщений")
-            return
+            await cmd.reply(
+                random.choice(["Да", "Нет", "Точно да", "Точно нет", "Неуверен", "Наверное", "Не сейчас", "Спроси снова"]))
+            
+            
+    @cooldown(30, True)
+    async def hero_command_handler(self, cmd: ChatCommand):
+        await cmd.reply(f"Тебе выпал: {random.choice(HEROES)}")
         
-        top_users = sorted(self._message_count.items(), key=itemgetter(1), reverse=True)[:5]
+    @cooldown(30, True)
+    async def build_command_handler(self, cmd: ChatCommand):
+        boots = random.choice(BOOTS)
+        items = random.sample(ITEMS, 5)
+        build = [boots] + items
+        await cmd.reply("Твой билд: " + ", ".join(build))
         
-        top_text = "Лучшие:\n"
-        for _, (user, count) in enumerate(top_users, start=1):
-            top_text += f"({_}) {user} — {count}\n"
-        
-        await cmd.reply(top_text)
-        
+    @cooldown(45, True)
+    async def gpt_command_handler(self, cmd: ChatCommand):
+        if len(cmd.parameter) == 0:
+            await cmd.reply("Напиши запрос!")
+        else:
+            text = await self.generate_text(cmd.parameter)
+            for _ in self.split_message(text):
+                await cmd.reply(_)
+                await asyncio.sleep(0.4)
+                
+    @cooldown(45, True)
+    async def art_command_handler(self, cmd: ChatCommand):
+        if len(cmd.parameter) == 0:
+            await cmd.reply("Напиши запрос!")
+        else:
+            await cmd.reply(await self.generate_art(cmd.parameter))
+            
+    @cooldown(20, True)
+    async def translate_command_handler(self, cmd: ChatCommand):
+        if len(cmd.parameter) == 0:
+            await cmd.reply("Напиши текст для перевода!")
+        else:
+            await cmd.reply(await self.translate(cmd.parameter, "ru"))
