@@ -9,7 +9,7 @@ import asyncio, aiohttp, random, time, re
 from g4f.client import Client, AsyncClient
 from translate import Translator
 
-from config import CLIENT_ID, CLIENT_SECRET, CHANNEL, TOKEN, REFRESH_TOKEN, LOG_PATH
+from cfg import CLIENT_ID, CLIENT_SECRET, CHANNEL, TOKEN, REFRESH_TOKEN, LOG_PATH
 from build import BOOTS, ITEMS
 from heroes import HEROES
 
@@ -100,10 +100,31 @@ class Bot:
     async def on_message(self, msg: ChatMessage):
         self.log.debug(f"in {msg.room.name}, {msg.user.name} said: {msg.text}")
         
-        self._message_count[msg.user.name] += 1
+        #any(word in text.lower() for word in ["@alaqubot", "алакубот"]) не трогать я потратил минут 20 на это
+        text = msg.text.strip()
+        if any(word in text.lower() for word in ["@alaqubot", "алакубот"]):
+            text = msg.text.split()
+            text = [w for w in text if w.lower() not in ["@alaqubot", "алакубот"]]
+            text = "".join(text)
+            
+            for _ in self.split_message(await self.generate_text(text)):
+                    await msg.reply(_)
+                    await asyncio.sleep(0.4)
+        
+        elif msg.reply_parent_user_login:
+            if msg.reply_parent_user_login.lower() == "alaqubot":
+                text = msg.text.split()
+                if "@alaqubot" in text:
+                    text.remove("@alaqubot")
+                text = "".join(text)
+                
+                for _ in self.split_message(await self.generate_text(text)):
+                    await msg.reply(_)
+                    await asyncio.sleep(0.4)
+                
         
         for cb in self._message_callbacks:
-            try:
+            try:    
                 if asyncio.iscoroutinefunction(cb):
                     await cb(msg)
                 else:
@@ -132,7 +153,7 @@ class Bot:
     async def generate_text(self, prompt: str):
         client = Client()
         response = client.chat.completions.create(
-            model="deepseek-v3",  # Try "gpt-4.1", "gpt-4o", "deepseek-v3", etc.
+            model="gpt-4.1",  # Try "gpt-4.1", "gpt-4o", "deepseek-v3", etc.
             messages=[{"role": "user", "content": prompt}],
             web_search=True
         )
