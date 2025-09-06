@@ -1,7 +1,6 @@
 twitchAPI==4.5.0
 environs==14.3.0
 loguru==0.7.3
-flet==0.28.3
-g4f==0.6.1.6
 translate==3.6.1
 aiohttp==3.12.15
+beautifulsoup4==4.13.5
