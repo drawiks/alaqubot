@@ -3,3 +3,5 @@ output/
 build/
 logs/
 .env
+.idea
+.venv
