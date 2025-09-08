@@ -1,13 +1,12 @@
 
 from twitchAPI.chat import ChatCommand
 
-from src.utils import cooldown, CurrencyConverter
+from src.utils import CurrencyConverter
 
 class UtilityCommands:
     def __init__(self, log_path):
         self.currency_converter = CurrencyConverter(log_path)
         
-    @cooldown(30, True)
     async def converter_command_handler(self, cmd: ChatCommand):
         
         if len(cmd.parameter) == 0:
