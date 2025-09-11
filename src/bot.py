@@ -7,7 +7,7 @@ from .config import CLIENT_ID, CLIENT_SECRET, CHANNEL, TOKEN, REFRESH_TOKEN, LOG
 
 from .events import MessageEvent, ReadyEvent
 from .commands import MainCommands, FunCommands, UtilityCommands
-from .utils import LogManager, CurrencyConverter
+from .utils import LogManager
         
 class Bot:
     def __init__(self):
@@ -44,8 +44,10 @@ class Bot:
         self.chat.register_command('гайд', self.main_commands.guide_command_handler)
         self.chat.register_command('мейн', self.main_commands.main_command_handler)
         
+        self.chat.register_command('спин', self.fun_commands.spin_command_handler)
         self.chat.register_command('монетка', self.fun_commands.coin_command_handler)
         self.chat.register_command('ролл', self.fun_commands.roll_command_handler)
+        self.chat.register_command('удар', self.fun_commands.punch_command_handler)
         self.chat.register_command('шар', self.fun_commands.ball_command_handler)
         
         self.chat.register_command('доллар', self.utility_commands.converter_command_handler)
