@@ -32,4 +32,4 @@ class CurrencyConverter:
         if amount == None:
             return f"USD: → RUB: {usd_rub:.2f} ₽ | UAH: {usd_uah:.2f} ₴"
         else:
-            return f"USD: {amount} $ → RUB: {amount * usd_rub:.2f} ₽ | UAH: {amount * usd_uah:.2f} ₴"
+            return f"USD: $ {amount} → RUB: {amount * usd_rub:.2f} ₽ | UAH: {amount * usd_uah:.2f} ₴"
