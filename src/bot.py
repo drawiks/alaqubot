@@ -49,5 +49,6 @@ class Bot:
         self.chat.register_command('ролл', self.fun_commands.roll_command_handler)
         self.chat.register_command('удар', self.fun_commands.punch_command_handler)
         self.chat.register_command('шар', self.fun_commands.ball_command_handler)
+        self.chat.register_command('школьницы', self.fun_commands.test)
         
         self.chat.register_command('доллар', self.utility_commands.converter_command_handler)

@@ -2,6 +2,7 @@
 from twitchAPI.chat import ChatCommand
 
 from random import randint, choice
+import asyncio
 
 class FunCommands:
     async def spin_command_handler(self, cmd: ChatCommand):
@@ -20,6 +21,11 @@ class FunCommands:
             spin = [choice(symbols) for _ in range(3)]
             text = f"Слоты: {spin[0]} {spin[1]} {spin[2]}"
             await cmd.reply(text)
+            
+    async def test(self, msg: ChatCommand):
+        for _ in range(10):
+            await msg.send("КАНАЛ ГДЕ ТРАХАЮТ ШКОЛЬНИЦ В ШАПКЕ ПРОФИЛЯ")
+            await asyncio.sleep(0.2)
     
     async def coin_command_handler(self, cmd: ChatCommand):
         await cmd.reply(choice(["Орёл", "Решка"]))
