@@ -1,6 +1,15 @@
+# --- twitch ---
 twitchAPI==4.5.0
+
+# --- config ---
 environs==14.3.0
+
+# --- logs ---
 loguru==0.7.3
-translate==3.6.1
+
+# --- web ---
 aiohttp==3.12.15
 beautifulsoup4==4.13.5
+
+# --- api ---
+translate==3.6.1
