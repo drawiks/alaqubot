@@ -16,27 +16,21 @@
 alaqubot/
 │
 ├── src/
-│   ├── commands/
-│   │   ├── __init__.py
-│   │   ├── main_commands.py
-│   │   ├── fun_commands.py
-│   │   └── utility_commands.py
-│   ├── events/
-│   │   ├── __init__.py
-│   │   ├── on_message.py
-│   │   └── on_ready.py
+│   ├── assets/
+│   │   ├── fonts/
+│   │   │   ├── IBMPlexSans-Bold.ttf
+│   │   │   ├── IBMPlexSans-Medium.ttf
+│   │   │   ├── Jersey20-Regular.ttf
+│   │   │   └── NotoSans-Regular.ttf
+│   │   └── icon.ico
 │   ├── utils/
-│   │   ├── __init__.py
-│   │   ├── cooldown.py     # --- задержка для команд ---
-│   │   ├── get_currency.py # --- курс доллара ---
-│   │   ├── get_stream.py   # --- получение информации про стрим ---
-│   │   └── logger.py       # --- логирование ---
+│   │   └── logger.py # --- логирование ---
 │   │
+│   ├── app.py # --- entrypoint ---
 │   ├── bot.py
 │   ├── config.py
+│   ├── build.py
 │   └── heroes.py
-│
-├── alaqubot.py # --- entrypoint ---
 │
 ├── alaqu.jpg
 │
@@ -60,11 +54,14 @@ environs==14.3.0
 # --- logs ---
 loguru==0.7.3
 
+# --- ui ---
+flet==0.28.3
+
 # --- web ---
 aiohttp==3.12.15
-beautifulsoup4==4.13.5
 
 # --- api ---
+g4f==0.6.1.6
 translate==3.6.1
 ```
 
