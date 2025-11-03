@@ -1,7 +1,7 @@
+
 from loguru import logger
 from pathlib import Path
 import sys
-
 
 class LogManager:
     def __init__(self, log_path: str, console_level: str = "TRACE"):
