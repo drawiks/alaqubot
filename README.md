@@ -1,6 +1,6 @@
 
 <div align="center">
-    <h1>🤡 alaqubot v2.0.0</h1>
+    <h1>🤡 alaqubot</h1>
     <img height="20" alt="Python 3.11+" src="https://img.shields.io/badge/python-3.11+-blue">
     <img height="20" alt="License Apache 2.0" src="https://img.shields.io/badge/license-MIT-green">
     <img height="20" alt="Status" src="https://img.shields.io/badge/status-pet--project-orange">

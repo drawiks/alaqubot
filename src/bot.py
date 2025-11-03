@@ -5,9 +5,11 @@ from twitchAPI.chat import Chat
 
 from .config import CLIENT_ID, CLIENT_SECRET, CHANNEL, TOKEN, REFRESH_TOKEN, LOG_PATH
 
-from .events import MessageEvent, ReadyEvent
-from .commands import MainCommands, FunCommands, UtilityCommands
-from .utils import LogManager
+from cfg import CLIENT_ID, CLIENT_SECRET, CHANNEL, TOKEN, REFRESH_TOKEN, LOG_PATH
+from build import BOOTS, ITEMS
+from heroes import HEROES
+
+from utils.logger import LogManager
         
 class Bot:
     def __init__(self):
