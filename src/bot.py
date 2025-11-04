@@ -22,17 +22,21 @@ class Bot:
         self.utility_commands = UtilityCommands(LOG_PATH)
     
     async def run(self):
-        self.twitch = await Twitch(CLIENT_ID, CLIENT_SECRET)
-        
+        self.twitch = Twitch(CLIENT_ID, CLIENT_SECRET)
         for _ in range(3):
             await self.twitch.set_user_authentication(TOKEN, self.USER_SCOPE, REFRESH_TOKEN)
-
+                
         self.chat = await Chat(self.twitch)
-
+            
         await self.register_events()
         await self.register_commands()
-        
-        self.chat.start()
+            
+        try:
+            self.chat.start()
+        except Exception as e:
+            self.log.critical(e)
+        finally:
+            await self.twitch.close()
 
     async def register_events(self):
         self.chat.register_event(ChatEvent.MESSAGE, self.message_event.on_message)
@@ -40,7 +44,7 @@ class Bot:
     
     async def register_commands(self):
         commands = {
-            "команды":self.main_commands.commands_command_handler,
+            "команды": self.main_commands.commands_command_handler,
             "тг": self.main_commands.tg_command_handler,
             "гайд": self.main_commands.guide_command_handler,
             "мейн": self.main_commands.main_command_handler,
