@@ -39,16 +39,22 @@ class Bot:
         self.chat.register_event(ChatEvent.READY, self.ready_event.on_ready)
     
     async def register_commands(self):
-        self.chat.register_command('команды', self.main_commands.commands_command_handler)
-        self.chat.register_command('тг', self.main_commands.tg_command_handler)
-        self.chat.register_command('гайд', self.main_commands.guide_command_handler)
-        self.chat.register_command('мейн', self.main_commands.main_command_handler)
+        commands = {
+            "команды":self.main_commands.commands_command_handler,
+            "тг": self.main_commands.tg_command_handler,
+            "гайд": self.main_commands.guide_command_handler,
+            "мейн": self.main_commands.main_command_handler,
+            
+            "спин": self.fun_commands.spin_command_handler,
+            "монетка": self.fun_commands.coin_command_handler,
+            "ролл": self.fun_commands.roll_command_handler,
+            "удар": self.fun_commands.punch_command_handler,
+            "шар": self.fun_commands.ball_command_handler,
+            "школьницы": self.fun_commands.schoolgirl,
+            
+            "доллар": self.utility_commands.converter_command_handler
+        }
         
-        self.chat.register_command('спин', self.fun_commands.spin_command_handler)
-        self.chat.register_command('монетка', self.fun_commands.coin_command_handler)
-        self.chat.register_command('ролл', self.fun_commands.roll_command_handler)
-        self.chat.register_command('удар', self.fun_commands.punch_command_handler)
-        self.chat.register_command('шар', self.fun_commands.ball_command_handler)
-        self.chat.register_command('школьницы', self.fun_commands.test)
+        for name, handler in commands.items():
+            self.chat.register_command(name, handler)
         
-        self.chat.register_command('доллар', self.utility_commands.converter_command_handler)

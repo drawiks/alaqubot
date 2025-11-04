@@ -22,7 +22,7 @@ class FunCommands:
             text = f"Слоты: {spin[0]} {spin[1]} {spin[2]}"
             await cmd.reply(text)
             
-    async def test(self, msg: ChatCommand):
+    async def schoolgirl(self, msg: ChatCommand):
         for _ in range(10):
             await msg.send("КАНАЛ ГДЕ ТРАХАЮТ ШКОЛЬНИЦ В ШАПКЕ ПРОФИЛЯ")
             await asyncio.sleep(0.2)
