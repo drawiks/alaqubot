@@ -5,4 +5,7 @@ if __name__ == "__main__":
     import asyncio
     
     bot = Bot()
-    asyncio.run(bot.run())
+    try:
+        asyncio.run(bot.run())
+    except KeyboardInterrupt:
+        print("bot stopped manually")
