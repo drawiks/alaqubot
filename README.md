@@ -73,36 +73,45 @@ class Bot:
         self.utility_commands = UtilityCommands(LOG_PATH)
     
     async def run(self):
-        self.twitch = await Twitch(CLIENT_ID, CLIENT_SECRET)
-        
+        self.twitch = Twitch(CLIENT_ID, CLIENT_SECRET)
         for _ in range(3):
             await self.twitch.set_user_authentication(TOKEN, self.USER_SCOPE, REFRESH_TOKEN)
-
+                
         self.chat = await Chat(self.twitch)
-
+            
         await self.register_events()
         await self.register_commands()
-        
-        self.chat.start()
+            
+        try:
+            self.chat.start()
+        except Exception as e:
+            self.log.critical(e)
+        finally:
+            await self.twitch.close()
 
     async def register_events(self):
         self.chat.register_event(ChatEvent.MESSAGE, self.message_event.on_message)
         self.chat.register_event(ChatEvent.READY, self.ready_event.on_ready)
     
     async def register_commands(self):
-        self.chat.register_command('команды', self.main_commands.commands_command_handler)
-        self.chat.register_command('тг', self.main_commands.tg_command_handler)
-        self.chat.register_command('гайд', self.main_commands.guide_command_handler)
-        self.chat.register_command('мейн', self.main_commands.main_command_handler)
+        commands = {
+            "команды": self.main_commands.commands_command_handler,
+            "тг": self.main_commands.tg_command_handler,
+            "гайд": self.main_commands.guide_command_handler,
+            "мейн": self.main_commands.main_command_handler,
+            "автор": self.main_commands.author,
+            
+            "спин": self.fun_commands.spin_command_handler,
+            "монетка": self.fun_commands.coin_command_handler,
+            "ролл": self.fun_commands.roll_command_handler,
+            "удар": self.fun_commands.punch_command_handler,
+            "шар": self.fun_commands.ball_command_handler,
+            
+            "доллар": self.utility_commands.converter_command_handler
+        }
         
-        self.chat.register_command('спин', self.fun_commands.spin_command_handler)
-        self.chat.register_command('монетка', self.fun_commands.coin_command_handler)
-        self.chat.register_command('ролл', self.fun_commands.roll_command_handler)
-        self.chat.register_command('удар', self.fun_commands.punch_command_handler)
-        self.chat.register_command('шар', self.fun_commands.ball_command_handler)
-        self.chat.register_command('школьницы', self.fun_commands.test)
-        
-        self.chat.register_command('доллар', self.utility_commands.converter_command_handler)
+        for name, handler in commands.items():
+            self.chat.register_command(name, handler)
 ```
 
 ---
