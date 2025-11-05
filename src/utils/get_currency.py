@@ -5,10 +5,10 @@ import requests
 from .logger import LogManager
 
 class CurrencyConverter:
-    def __init__(self, log_path):
+    def __init__(self, log_path: str):
         self.log = LogManager(log_path).logger
 
-    def fetch_rate(self, url: str) -> float | None:
+    def fetch_rate(self, url: str):
         try:
             response = requests.get(url, timeout=10)
             if response.status_code == 200:
