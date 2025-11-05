@@ -48,13 +48,13 @@ class Bot:
             "тг": self.main_commands.tg_command_handler,
             "гайд": self.main_commands.guide_command_handler,
             "мейн": self.main_commands.main_command_handler,
+            "автор": self.main_commands.author,
             
             "спин": self.fun_commands.spin_command_handler,
             "монетка": self.fun_commands.coin_command_handler,
             "ролл": self.fun_commands.roll_command_handler,
             "удар": self.fun_commands.punch_command_handler,
             "шар": self.fun_commands.ball_command_handler,
-            "школьницы": self.fun_commands.schoolgirl,
             
             "доллар": self.utility_commands.converter_command_handler
         }
