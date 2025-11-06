@@ -56,9 +56,12 @@ class Bot:
             "удар": self.fun_commands.punch_command_handler,
             "шар": self.fun_commands.ball_command_handler,
             "карты": self.fun_commands.card_command_handler,
+            "факт": self.fun_commands.fact_command_handler,
             
             "доллар": self.utility_commands.converter_command_handler,
             "гороскоп": self.utility_commands.horoscope_command_handler,
+            "погода": self.utility_commands.weather_command_handler,
+            "перевод": self.utility_commands.translate_command_handler,
         }
         
         for name, handler in commands.items():

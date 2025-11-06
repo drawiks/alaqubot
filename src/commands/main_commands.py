@@ -3,7 +3,7 @@ from twitchAPI.chat import ChatCommand
 
 class MainCommands:
     async def commands_command_handler(self, cmd: ChatCommand):
-        await cmd.reply("!тг, !гайд, !мейн, !автор, !монетка, !ролл, !шар (вопрос), !карты (количество)")
+        await cmd.reply("!тг, !гайд, !мейн, !автор, !монетка, !ролл, !факт, !шар (вопрос), !карты (количество), !доллар (количество), !гороскоп (знак зодиака), !погода (город), !перевод (текст)")
     
     async def tg_command_handler(self, cmd: ChatCommand):
         if len(cmd.parameter) == 0:

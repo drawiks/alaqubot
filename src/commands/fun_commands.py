@@ -3,7 +3,7 @@ from twitchAPI.chat import ChatCommand
 
 from random import randint, choice
 
-from src.utils import Cards
+from src.utils import Cards, get_fact
 
 class FunCommands:
     def __init__(self):
@@ -27,6 +27,7 @@ class FunCommands:
             text = f"Слоты: {spin[0]} {spin[1]} {spin[2]}"
             await cmd.reply(text)
     
+    """!карты"""
     async def card_command_handler(self, cmd: ChatCommand):
         if len(cmd.parameter) == 0:
             for _ in self.cards.get_cards():
@@ -37,6 +38,10 @@ class FunCommands:
                     await cmd.reply(_)
             else:
                 await cmd.reply("Дохуя просишь братик) https://t.me/alaquu")
+    
+    """!факт"""
+    async def fact_command_handler(self, cmd: ChatCommand):
+        await cmd.reply(get_fact())
     
     """!монетка"""
     async def coin_command_handler(self, cmd: ChatCommand):
