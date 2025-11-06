@@ -30,6 +30,11 @@ alaqubot/
 │   │   ├── cooldown.py     # --- задержка для команд ---
 │   │   ├── get_currency.py # --- курс доллара ---
 │   │   ├── get_stream.py   # --- получение информации про стрим ---
+│   │   ├── fact.py         # --- случайный факт ---
+│   │   ├── cards.py        # --- случайная карта ---
+│   │   ├── horoscope.py    # --- гороскоп ---
+│   │   ├── translate.py    # --- переводчик ---
+│   │   ├── weather.py      # --- получение погоды ---
 │   │   └── logger.py       # --- логирование ---
 │   │
 │   ├── bot.py
@@ -106,8 +111,13 @@ class Bot:
             "ролл": self.fun_commands.roll_command_handler,
             "удар": self.fun_commands.punch_command_handler,
             "шар": self.fun_commands.ball_command_handler,
+            "карты": self.fun_commands.card_command_handler,
+            "факт": self.fun_commands.fact_command_handler,
             
-            "доллар": self.utility_commands.converter_command_handler
+            "доллар": self.utility_commands.converter_command_handler,
+            "гороскоп": self.utility_commands.horoscope_command_handler,
+            "погода": self.utility_commands.weather_command_handler,
+            "перевод": self.utility_commands.translate_command_handler,
         }
         
         for name, handler in commands.items():
@@ -133,6 +143,6 @@ aiohttp==3.12.15
 beautifulsoup4==4.13.5
 
 # --- api ---
-translate==3.6.1
+deep-translator==1.11.4
 ```
 
