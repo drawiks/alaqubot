@@ -7,7 +7,7 @@ from .config import CLIENT_ID, CLIENT_SECRET, CHANNEL, TOKEN, REFRESH_TOKEN, LOG
 
 from .events import MessageEvent, ReadyEvent
 from .commands import MainCommands, FunCommands, UtilityCommands
-from .utils import LogManager
+from .utils import LogManager, commands
         
 class Bot:
     def __init__(self):
@@ -20,6 +20,8 @@ class Bot:
         self.main_commands =  MainCommands()
         self.fun_commands = FunCommands()
         self.utility_commands = UtilityCommands(LOG_PATH)
+        
+        self.commands = commands
     
     async def run(self):
         self.twitch = Twitch(CLIENT_ID, CLIENT_SECRET)
@@ -43,27 +45,14 @@ class Bot:
         self.chat.register_event(ChatEvent.READY, self.ready_event.on_ready)
     
     async def register_commands(self):
-        commands = {
-            "команды": self.main_commands.commands_command_handler,
-            "тг": self.main_commands.tg_command_handler,
-            "гайд": self.main_commands.guide_command_handler,
-            "мейн": self.main_commands.main_command_handler,
-            "автор": self.main_commands.author,
-            
-            "спин": self.fun_commands.spin_command_handler,
-            "монетка": self.fun_commands.coin_command_handler,
-            "ролл": self.fun_commands.roll_command_handler,
-            "удар": self.fun_commands.punch_command_handler,
-            "шар": self.fun_commands.ball_command_handler,
-            "карты": self.fun_commands.card_command_handler,
-            "факт": self.fun_commands.fact_command_handler,
-            
-            "доллар": self.utility_commands.converter_command_handler,
-            "гороскоп": self.utility_commands.horoscope_command_handler,
-            "погода": self.utility_commands.weather_command_handler,
-            "перевод": self.utility_commands.translate_command_handler,
-        }
-        
+        commands = {}
+
+        for name, func in self.commands.items():
+            for module in [self.main_commands, self.fun_commands, self.utility_commands]:
+                if hasattr(module, func.__name__):
+                    commands[name] = func.__get__(module, module.__class__)
+                    break
+
         for name, handler in commands.items():
             self.chat.register_command(name, handler)
         
