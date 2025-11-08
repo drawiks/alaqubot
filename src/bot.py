@@ -7,7 +7,7 @@ from .config import CLIENT_ID, CLIENT_SECRET, CHANNEL, TOKEN, REFRESH_TOKEN, LOG
 
 from .events import MessageEvent, ReadyEvent
 from .commands import MainCommands, FunCommands, UtilityCommands
-from .utils import LogManager, commands
+from .utils import LogManager, get_commands
         
 class Bot:
     def __init__(self):
@@ -20,8 +20,6 @@ class Bot:
         self.main_commands =  MainCommands()
         self.fun_commands = FunCommands()
         self.utility_commands = UtilityCommands(LOG_PATH)
-        
-        self.commands = commands
     
     async def run(self):
         self.twitch = Twitch(CLIENT_ID, CLIENT_SECRET)
@@ -45,14 +43,17 @@ class Bot:
         self.chat.register_event(ChatEvent.READY, self.ready_event.on_ready)
     
     async def register_commands(self):
-        commands = {}
-
-        for name, func in self.commands.items():
-            for module in [self.main_commands, self.fun_commands, self.utility_commands]:
-                if hasattr(module, func.__name__):
-                    commands[name] = func.__get__(module, module.__class__)
+        commands = get_commands()
+        for cmd_name, (func, owner_name) in commands.items():
+            target = None
+            for candidate in (self.main_commands, self.fun_commands, self.utility_commands):
+                if candidate.__class__.__name__ == owner_name:
+                    target = candidate
                     break
 
-        for name, handler in commands.items():
-            self.chat.register_command(name, handler)
+            if target is None:
+                target = self.main_commands
+
+            bound = func.__get__(target, target.__class__)
+            self.chat.register_command(cmd_name, bound)
         

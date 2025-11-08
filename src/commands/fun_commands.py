@@ -3,7 +3,7 @@ from twitchAPI.chat import ChatCommand
 
 from random import randint, choice
 
-from src.utils import Cards, get_fact, register
+from src.utils import Cards, get_fact, register, cooldown
 
 class FunCommands:
     def __init__(self):
@@ -11,6 +11,7 @@ class FunCommands:
     
     """!спин"""
     @register("спин")
+    @cooldown(20)
     async def spin_command_handler(self, cmd: ChatCommand):
         if cmd.user.name in ["alaqu1337", "lgwxgk"]:
             if choice([True, False]):
@@ -30,6 +31,7 @@ class FunCommands:
     
     """!карты"""
     @register("карты")
+    @cooldown(30)
     async def card_command_handler(self, cmd: ChatCommand):
         if len(cmd.parameter) == 0:
             for _ in self.cards.get_cards():
@@ -43,21 +45,25 @@ class FunCommands:
     
     """!факт"""
     @register("факт")
+    @cooldown(20)
     async def fact_command_handler(self, cmd: ChatCommand):
         await cmd.reply(get_fact())
     
     """!монетка"""
     @register("монетка")
+    @cooldown(10)
     async def coin_command_handler(self, cmd: ChatCommand):
         await cmd.reply(choice(["Орёл", "Решка"]))
     
     """!ролл"""
     @register("ролл")
+    @cooldown(10)
     async def roll_command_handler(self, cmd: ChatCommand):
         await cmd.reply(randint(0, 100))
     
     """!удар"""
     @register("удар")
+    @cooldown(10)
     async def punch_command_handler(self, cmd: ChatCommand):
         if len(cmd.parameter) == 0:
             await cmd.reply("Напиши юзернейм!")
@@ -66,6 +72,7 @@ class FunCommands:
     
     """!шар"""
     @register("шар")
+    @cooldown(30)
     async def ball_command_handler(self, cmd: ChatCommand):
         if len(cmd.parameter) == 0:
             await cmd.reply("Напиши вопрос!")
