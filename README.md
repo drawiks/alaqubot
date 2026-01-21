@@ -173,5 +173,9 @@ beautifulsoup4==4.13.5
 
 # --- api ---
 deep-translator==1.11.4
+
+# --- cli ---
+pyfiglet==1.0.4
+termcolor==3.3.0
 ```
 
