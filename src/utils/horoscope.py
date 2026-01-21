@@ -46,6 +46,7 @@ class Horoscope:
             if p:
                 result = p.get_text(strip=True)
                 cache.set_cache(cache_key, result, ttl=86400)
+                self.log.debug(f"cached horoscope for {zodiac}: {result}")
                 return result
         except Exception as e:
             self.log.error(f"error fetching horoscope for {zodiac}: {e}")

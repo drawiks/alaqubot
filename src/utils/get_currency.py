@@ -23,7 +23,7 @@ class CurrencyConverter:
                 if elem:
                     rate = float(elem.text.strip().replace(",", "."))
                     cache.set_cache(cache_key, rate, ttl=3600)
-                    self.log.info(f"cached rate for {url}: {rate}")
+                    self.log.debug(f"cached rate for {url}: {rate}")
                     return rate
             else:
                 self.log.error(f"{response.status_code} in {url}")
