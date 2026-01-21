@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import requests
 
 from .logger import LogManager
+from .cache import cache
 
 class Horoscope:
     
@@ -26,16 +27,26 @@ class Horoscope:
         self.log = LogManager(log_path).logger
         
     def fetch(self, zodiac: str):
+        zodiac = zodiac.lower()
+        if zodiac not in self.URLS:
+            return "Неверный знак зодиака."
+        
+        cache_key = f"horoscope:{zodiac}"
+        cached_value = cache.get_cache(cache_key)
+        if cached_value is not None:
+            return cached_value
+        
         try:
             response = requests.get(self.URLS[zodiac.lower()], headers=self.HEADERS, timeout=10)
             response.raise_for_status()
-        except Exception:
-            return None
-
-        soup = BeautifulSoup(response.text, "html.parser")
-
-        p = soup.find("p", class_="")
-        if p:
-            return p.get_text(strip=True)
-        else: 
-            None
+            
+            soup = BeautifulSoup(response.text, "html.parser")
+            p = soup.find("p", class_="")
+            
+            if p:
+                result = p.get_text(strip=True)
+                cache.set_cache(cache_key, result, ttl=86400)
+                self.log.debug(f"cached horoscope for {zodiac}: {result}")
+                return result
+        except Exception as e:
+            self.log.error(f"error fetching horoscope for {zodiac}: {e}")

@@ -7,3 +7,4 @@ from .fact import get_fact
 from .translate import get_translate
 from .register_command import register, get_commands
 from .cooldown import cooldown
+from .cache import cache
