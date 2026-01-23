@@ -3,7 +3,7 @@ from twitchAPI.twitch import Twitch
 from twitchAPI.type import AuthScope, ChatEvent
 from twitchAPI.chat import Chat
 
-from .config import CLIENT_ID, CLIENT_SECRET, CHANNEL, TOKEN, REFRESH_TOKEN, LOG_PATH
+from .config import CLIENT_ID, CLIENT_SECRET, CHANNELS, TOKEN, REFRESH_TOKEN, LOG_PATH
 
 from .events import MessageEvent, ReadyEvent
 from .commands import MainCommands, FunCommands, UtilityCommands
@@ -16,7 +16,7 @@ class Bot:
         self.log = LogManager(LOG_PATH).logger
         
         self.message_event = MessageEvent(LOG_PATH)
-        self.ready_event = ReadyEvent(LOG_PATH, CHANNEL)
+        self.ready_event = ReadyEvent(LOG_PATH, CHANNELS)
         
         self.main_commands =  MainCommands()
         self.fun_commands = FunCommands()
