@@ -9,6 +9,7 @@ from .events import MessageEvent, ReadyEvent
 from .commands import MainCommands, FunCommands, UtilityCommands
 from .utils import LogManager, get_commands
         
+import asyncio
 class Bot:
     def __init__(self):
         self.USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT]
@@ -22,21 +23,31 @@ class Bot:
         self.utility_commands = UtilityCommands(LOG_PATH)
     
     async def run(self):
-        self.twitch = Twitch(CLIENT_ID, CLIENT_SECRET)
-        for _ in range(3):
-            await self.twitch.set_user_authentication(TOKEN, self.USER_SCOPE, REFRESH_TOKEN)
+        while True:
+            try:
+                self.log.info("init")
+                self.twitch = Twitch(CLIENT_ID, CLIENT_SECRET)
+                await self.twitch.set_user_authentication(TOKEN, self.USER_SCOPE, REFRESH_TOKEN)
+                        
+                self.chat = await Chat(self.twitch)
+                self.chat.no_message_reset_time = 5
+                    
+                await self.register_events()
+                await self.register_commands()
                 
-        self.chat = await Chat(self.twitch)
-            
-        await self.register_events()
-        await self.register_commands()
-            
-        try:
-            self.chat.start()
-        except Exception as e:
-            self.log.critical(e)
-        finally:
-            await self.twitch.close()
+                self.chat.start()
+                
+                while True:
+                    await asyncio.sleep(60)
+                
+            except Exception as e:
+                self.log.critical(e)
+                self.log.info("restart")
+            finally:
+                if hasattr(self, 'chat'):
+                    self.chat.stop()
+                await self.twitch.close()
+            await asyncio.sleep(15)
 
     async def register_events(self):
         self.chat.register_event(ChatEvent.MESSAGE, self.message_event.on_message)

@@ -1,12 +1,14 @@
 
 from twitchAPI.chat import ChatCommand
-from src.utils import register, cooldown
+from src.utils import register, cooldown, get_commands
+
 class MainCommands:
     """!команды"""
     @register("команды")
-    @cooldown(10)
     async def commands_command_handler(self, cmd: ChatCommand):
-        await cmd.reply("!тг, !гайд, !мейн, !автор, !монетка, !ролл, !факт, !шар (вопрос), !карты (количество), !доллар (количество), !гороскоп (знак зодиака), !погода (город), !перевод (текст)")
+        all_cmds = get_commands().keys()
+        reply = "Команды: !" + ", !".join(sorted(all_cmds))
+        await cmd.reply(reply)
     
     """!тг"""
     @register("тг")

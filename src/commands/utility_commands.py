@@ -24,7 +24,8 @@ class UtilityCommands:
         if len(cmd.parameter) == 0:
             await cmd.reply("Введи свой знак зодиака! (овен, телец, близнецы, рак, лев, дева, весы, скорпион, стрелец, козерог, водолей, рыбы)")
         else:
-            await cmd.reply(self.horoscope.fetch(str(cmd.parameter)))
+            result = self.horoscope.fetch(str(cmd.parameter))
+            await cmd.reply(result or "Не удалось получить гороскоп для этого знака зодиака.")
     
     """!погода"""
     @register("погода")
