@@ -1,12 +1,14 @@
 
+import cmd
 from twitchAPI.chat import ChatCommand
 
-from src.utils import CurrencyConverter, Horoscope, get_weather, get_translate, register, cooldown
+from src.utils import CurrencyConverter, Horoscope, Film, get_weather, get_translate, register, cooldown
 
 class UtilityCommands:
     def __init__(self, log_path):
         self.currency_converter = CurrencyConverter(log_path)
         self.horoscope = Horoscope(log_path)
+        self.film = Film(log_path)
     
     """!доллар"""
     @register("доллар")
@@ -26,6 +28,13 @@ class UtilityCommands:
         else:
             result = self.horoscope.fetch(str(cmd.parameter))
             await cmd.reply(result or "Не удалось получить гороскоп для этого знака зодиака.")
+            
+    """!фильм"""
+    @register("фильм")
+    @cooldown(30)
+    async def film_command_handler(self, cmd: ChatCommand):
+        result = self.film.fetch()
+        await cmd.reply(result or "Не удалось получить фильм")
     
     """!погода"""
     @register("погода")
