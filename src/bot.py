@@ -55,7 +55,7 @@ class Bot:
     
     async def register_commands(self):
         commands = get_commands()
-        for cmd_name, (func, owner_name) in commands.items():
+        for cmd_name, (func, owner_name, is_public) in commands.items():
             target = None
             for candidate in (self.main_commands, self.fun_commands, self.utility_commands):
                 if candidate.__class__.__name__ == owner_name:

@@ -1,11 +1,22 @@
 
-import cmd
 from twitchAPI.chat import ChatCommand
 
-from src.utils import CurrencyConverter, Horoscope, Film, get_weather, get_translate, register, cooldown
+from datetime import datetime
+
+from src.utils import (
+    CurrencyConverter, 
+    Horoscope, Film, 
+    get_weather, 
+    get_translate, 
+    register, 
+    cooldown, 
+    permission,
+    get_uptime
+)
 
 class UtilityCommands:
     def __init__(self, log_path):
+        self.start_time = datetime.now()
         self.currency_converter = CurrencyConverter(log_path)
         self.horoscope = Horoscope(log_path)
         self.film = Film(log_path)
@@ -53,3 +64,9 @@ class UtilityCommands:
             await cmd.reply("Введи текст для перевода!")
         else:
             await cmd.reply(get_translate(str(cmd.parameter)))
+    
+    """!uptime"""
+    @register("uptime")
+    @permission()
+    async def uptime_command_handler(self, cmd: ChatCommand):
+        await cmd.reply(get_uptime(self.start_time))

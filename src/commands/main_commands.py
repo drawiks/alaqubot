@@ -10,7 +10,7 @@ class MainCommands:
     """!команды"""
     @register("команды")
     async def commands_command_handler(self, cmd: ChatCommand):
-        all_cmds = get_commands().keys()
+        all_cmds = [name for name, info in get_commands().items() if info[2]]
         reply = "Команды: !" + ", !".join(sorted(all_cmds))
         await cmd.reply(reply)
     
