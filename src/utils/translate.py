@@ -1,26 +1,18 @@
-from deep_translator import GoogleTranslator
-from lingua import Language, LanguageDetectorBuilder
 
-languages = [Language.ENGLISH, Language.RUSSIAN]
-detector = LanguageDetectorBuilder.from_languages(*languages).build()
+from deep_translator import GoogleTranslator
+import langid
 
 def get_translate(text: str):
-    if not text.strip():
-        return "Пустой текст"
+    if not text or len(text.strip()) < 2:
+        return "Текст слишком короткий для перевода."
 
     try:
-        detected_lang = detector.detect_language_of(text)
+        detected_lang = langid.classify(text)[0]
+        target_lang = 'en' if detected_lang == 'ru' else 'ru'
         
-        match detected_lang:
-            case Language.RUSSIAN:
-                target = "en"
-            case Language.ENGLISH:
-                target = "ru"
-            case _:
-                target = "ru"
+        result = GoogleTranslator(source='auto', target=target_lang).translate(text)
+        
+        return result if result else "Не удалось получить перевод."
 
-        translation = GoogleTranslator(source="auto", target=target).translate(text)
-        return translation
-        
     except Exception as e:
-        return f"Ошибка: {e}"
+        return f"Ошибка перевода: {str(e)}"
