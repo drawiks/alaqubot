@@ -51,5 +51,5 @@ class MainCommands:
                 case "alaqu1337":
                     await cmd.reply("Мейн Егора - https://steamcommunity.com/profiles/76561198993439266")
                 case "paxi_pixi":
-                    await cmd.reply("Мейн Женька - 240695842")
+                    await cmd.reply("Мейн Женька - https://ru.dotabuff.com/players/240695842")
         
