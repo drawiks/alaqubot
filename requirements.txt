@@ -16,6 +16,7 @@ beautifulsoup4==4.13.5
 
 # --- api ---
 deep-translator==1.11.4
+langdetect==1.0.9
 
 # --- cli ---
 pyfiglet==1.0.4
