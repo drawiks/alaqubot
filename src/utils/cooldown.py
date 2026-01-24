@@ -5,7 +5,7 @@ import time
 
 def cooldown(seconds=30, per_user=True, ignore_users=None):
     if ignore_users is None:
-        ignore_users = ["drawksr69", "alaqu1337"]
+        ignore_users = ["drawksr69", "alaqu1337", "paxi_pixi", "lgwxgk"]
     cooldowns = {}
 
     def decorator(func):

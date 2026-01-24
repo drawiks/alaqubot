@@ -3,40 +3,51 @@ from twitchAPI.twitch import Twitch
 from twitchAPI.type import AuthScope, ChatEvent
 from twitchAPI.chat import Chat
 
-from .config import CLIENT_ID, CLIENT_SECRET, CHANNEL, TOKEN, REFRESH_TOKEN, LOG_PATH
+from .config import CLIENT_ID, CLIENT_SECRET, CHANNELS, TOKEN, REFRESH_TOKEN, LOG_PATH
 
 from .events import MessageEvent, ReadyEvent
 from .commands import MainCommands, FunCommands, UtilityCommands
 from .utils import LogManager, get_commands
         
+import asyncio
 class Bot:
     def __init__(self):
         self.USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT]
         self.log = LogManager(LOG_PATH).logger
         
         self.message_event = MessageEvent(LOG_PATH)
-        self.ready_event = ReadyEvent(LOG_PATH, CHANNEL)
+        self.ready_event = ReadyEvent(LOG_PATH, CHANNELS)
         
         self.main_commands =  MainCommands()
         self.fun_commands = FunCommands()
         self.utility_commands = UtilityCommands(LOG_PATH)
     
     async def run(self):
-        self.twitch = Twitch(CLIENT_ID, CLIENT_SECRET)
-        for _ in range(3):
-            await self.twitch.set_user_authentication(TOKEN, self.USER_SCOPE, REFRESH_TOKEN)
+        while True:
+            try:
+                self.log.info("init")
+                self.twitch = Twitch(CLIENT_ID, CLIENT_SECRET)
+                await self.twitch.set_user_authentication(TOKEN, self.USER_SCOPE, REFRESH_TOKEN)
+                        
+                self.chat = await Chat(self.twitch)
+                self.chat.no_message_reset_time = 5
+                    
+                await self.register_events()
+                await self.register_commands()
                 
-        self.chat = await Chat(self.twitch)
-            
-        await self.register_events()
-        await self.register_commands()
-            
-        try:
-            self.chat.start()
-        except Exception as e:
-            self.log.critical(e)
-        finally:
-            await self.twitch.close()
+                self.chat.start()
+                
+                while True:
+                    await asyncio.sleep(60)
+                
+            except Exception as e:
+                self.log.critical(e)
+                self.log.info("restart")
+            finally:
+                if hasattr(self, 'chat'):
+                    self.chat.stop()
+                await self.twitch.close()
+            await asyncio.sleep(15)
 
     async def register_events(self):
         self.chat.register_event(ChatEvent.MESSAGE, self.message_event.on_message)
@@ -44,7 +55,7 @@ class Bot:
     
     async def register_commands(self):
         commands = get_commands()
-        for cmd_name, (func, owner_name) in commands.items():
+        for cmd_name, (func, owner_name, is_public) in commands.items():
             target = None
             for candidate in (self.main_commands, self.fun_commands, self.utility_commands):
                 if candidate.__class__.__name__ == owner_name:

@@ -1,25 +1,37 @@
 
 from twitchAPI.chat import ChatCommand
-from src.utils import register, cooldown
+from src.utils import register, cooldown, get_commands, load_commands
+
+
 class MainCommands:
+    def __init__(self):
+        self.commands = load_commands()
+    
     """!команды"""
     @register("команды")
-    @cooldown(10)
     async def commands_command_handler(self, cmd: ChatCommand):
-        await cmd.reply("!тг, !гайд, !мейн, !автор, !монетка, !ролл, !факт, !шар (вопрос), !карты (количество), !доллар (количество), !гороскоп (знак зодиака), !погода (город), !перевод (текст)")
+        all_cmds = [name for name, info in get_commands().items() if info[2]]
+        reply = "Команды: !" + ", !".join(sorted(all_cmds))
+        await cmd.reply(reply)
     
     """!тг"""
     @register("тг")
     @cooldown(30)
     async def tg_command_handler(self, cmd: ChatCommand):
+        
         if len(cmd.parameter) == 0:
-            await cmd.reply("https://t.me/alaquu")
+            if cmd.room is not None:
+                channel = self.commands.get(cmd.room.name, {})
+                await cmd.reply(channel.get("тг"))
+                        
         else:
-            if int(cmd.parameter) <= 5:
-                for _ in range(int(cmd.parameter)):
-                    await cmd.reply("https://t.me/alaquu")
-            else:
-                await cmd.reply("Дохуя просишь братик) https://t.me/alaquu")
+            if cmd.room is not None:
+                channel = self.commands.get(cmd.room.name, {})
+                if int(cmd.parameter) <= 5:
+                    for _ in range(int(cmd.parameter)):
+                        await cmd.reply(channel.get("тг"))
+                else:
+                    await cmd.reply("Дохуя просишь братик)")
     
     """!автор"""
     @register("автор")
@@ -32,10 +44,15 @@ class MainCommands:
     @register("гайд")
     @cooldown(30)
     async def guide_command_handler(self, cmd: ChatCommand):
-        await cmd.reply("Гайд на кеза и тинкера - https://t.me/alaquu/460")
+        if cmd.room is not None:
+            channel = self.commands.get(cmd.room.name, {})
+            await cmd.reply(channel.get("гайд"))
     
     """!мейн"""
     @register("мейн")
     @cooldown(30)
     async def main_command_handler(self, cmd: ChatCommand):
-        await cmd.reply("Мейн Егора - https://steamcommunity.com/profiles/76561198993439266")
+        if cmd.room is not None:
+            channel = self.commands.get(cmd.room.name, {})
+            await cmd.reply(channel.get("мейн"))
+        
