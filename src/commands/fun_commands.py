@@ -2,12 +2,14 @@
 from twitchAPI.chat import ChatCommand
 
 from random import randint, choice
+from datetime import datetime
 
-from src.utils import Cards, get_fact, register, cooldown
+from src.utils import Cards, get_fact, register, cooldown, get_uptime
 
 class FunCommands:
     def __init__(self):
         self.cards = Cards()
+        self.start_time = datetime.now()
     
     """!спин"""
     @register("спин")
@@ -59,7 +61,7 @@ class FunCommands:
     @register("ролл")
     @cooldown(10)
     async def roll_command_handler(self, cmd: ChatCommand):
-        await cmd.reply(randint(0, 100))
+        await cmd.reply(str(randint(0, 100)))
     
     """!удар"""
     @register("удар")
@@ -78,3 +80,12 @@ class FunCommands:
             await cmd.reply("Напиши вопрос!")
         else:
             await cmd.reply(choice(["Да", "Нет", "Точно да", "Точно нет", "Неуверен", "Наверное", "Не сейчас", "Спроси снова"]))
+            
+    """!uptime"""
+    @register("uptime")
+    async def uptime_command_handler(self, cmd: ChatCommand):
+        match cmd.user.name:
+            case "alaqu1337" | "lgwxgk" | "paxi_pixi":
+                await cmd.reply(get_uptime(self.start_time))
+            case _:
+                pass
