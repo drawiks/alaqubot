@@ -15,13 +15,19 @@ class MainCommands:
     @cooldown(30)
     async def tg_command_handler(self, cmd: ChatCommand):
         if len(cmd.parameter) == 0:
-            await cmd.reply("https://t.me/alaquu")
+            if cmd.room is not None:
+                match cmd.room.name:
+                    case "alaqu1337":
+                        await cmd.reply("https://t.me/alaquu")
+                    case "paxi_pixi":
+                        await cmd.reply("https://t.me/paxipixi")
         else:
-            if int(cmd.parameter) <= 5:
-                for _ in range(int(cmd.parameter)):
-                    await cmd.reply("https://t.me/alaquu")
-            else:
-                await cmd.reply("Дохуя просишь братик) https://t.me/alaquu")
+            if cmd.room is not None and cmd.room.name == "alaqu1337":
+                if int(cmd.parameter) <= 5:
+                    for _ in range(int(cmd.parameter)):
+                        await cmd.reply("https://t.me/alaquu")
+                else:
+                    await cmd.reply("Дохуя просишь братик) https://t.me/alaquu")
     
     """!автор"""
     @register("автор")

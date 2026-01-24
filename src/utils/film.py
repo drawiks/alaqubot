@@ -27,7 +27,7 @@ class Film:
                     "rating": movie.get('rating'),
                     "year": movie.get('year')
                 }
-                return f"Фильм: {movie.get("nameRu")}|Рейтинг: {movie.get('rating')}|Год:{movie.get('year')}"
+                return f"Фильм: {movie.get("nameRu")} | Рейтинг: {movie.get('rating')} | Год: {movie.get('year')}"
             else:
                 self.log.error(f"{response.status_code}")
                 return "Иди нахуй!"
