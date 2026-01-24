@@ -16,7 +16,6 @@ beautifulsoup4==4.13.5
 
 # --- api ---
 deep-translator==1.11.4
-lingua-language-detector==2.1.1
 langid==1.1.6
 
 # --- cli ---
