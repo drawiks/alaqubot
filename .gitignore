@@ -3,3 +3,4 @@ output/
 build/
 logs/
 .env
+commands.json
