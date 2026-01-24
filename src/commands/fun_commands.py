@@ -60,6 +60,12 @@ class FunCommands:
     @cooldown(10)
     async def roll_command_handler(self, cmd: ChatCommand):
         await cmd.reply(str(randint(0, 100)))
+        
+    """!зона"""
+    @register("зона")
+    @cooldown(10)
+    async def zone_command_handler(self, cmd: ChatCommand):
+        await cmd.reply(choice(["тихоня", "мент", "шестерка", "авторитет", "блатной", "вор в законе", "опущенный", "мастер на все руки", "пахан", "крыша", "туз", "бригадир", "приблатнённый", "фуфлыжник", "серый кардинал"]))
     
     """!удар"""
     @register("удар")
