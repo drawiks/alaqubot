@@ -25,7 +25,7 @@ class LogManager:
         logger.add(
             self._log_file,
             level="TRACE",
-            rotation="500 KB",
+            rotation="10 MB",
             retention="7 days",
             compression="zip",
             backtrace=True,

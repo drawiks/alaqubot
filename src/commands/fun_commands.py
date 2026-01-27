@@ -4,16 +4,18 @@ from twitchAPI.chat import ChatCommand
 from random import randint, choice
 
 from src.utils import Cards, get_fact, register, cooldown
+from src.api import load_users
 
 class FunCommands:
     def __init__(self):
         self.cards = Cards()
+        self.users = load_users()
     
     """!спин"""
     @register("спин")
     @cooldown(20)
     async def spin_command_handler(self, cmd: ChatCommand):
-        if cmd.user.name in ["alaqu1337", "lgwxgk"]:
+        if cmd.user.name in self.users["users"]:
             if choice([True, False]):
                 symbol = choice(["🍎", "🍒", "🍌", "🍉", "⭐"])
                 text = f"Слоты: {symbol} {symbol} {symbol}"
