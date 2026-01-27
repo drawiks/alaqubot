@@ -8,4 +8,4 @@ class MessageEvent:
         self.log = LogManager(log_path).logger
 
     async def on_message(self, msg: ChatMessage):
-        self.log.trace(f"{msg.room.name if msg.room else ""} {msg.user.name}: {msg.text}")
+        self.log.trace(f"|room - {msg.room.name if msg.room else ""}| {msg.user.name}: {msg.text}")
