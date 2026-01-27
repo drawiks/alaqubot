@@ -9,6 +9,5 @@ from .translate import get_translate
 from .register_command import register, get_commands
 from .permission import permission
 from .uptime import get_uptime
-from .load_commands import load_commands
 from .cooldown import cooldown
 from .cache import cache

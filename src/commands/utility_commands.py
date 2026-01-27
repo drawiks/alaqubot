@@ -14,13 +14,15 @@ from src.utils import (
     get_uptime
 )
 
+from src.api import load_users
+
 class UtilityCommands:
     def __init__(self, log_path):
         self.start_time = datetime.now()
         self.currency_converter = CurrencyConverter(log_path)
         self.horoscope = Horoscope(log_path)
         self.film = Film(log_path)
-    
+
     """!доллар"""
     @register("доллар")
     @cooldown(10)
@@ -67,6 +69,6 @@ class UtilityCommands:
     
     """!uptime"""
     @register("uptime")
-    @permission()
+    @permission(load_users()["users"])
     async def uptime_command_handler(self, cmd: ChatCommand):
         await cmd.reply(get_uptime(self.start_time))

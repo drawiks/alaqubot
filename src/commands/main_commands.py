@@ -1,7 +1,7 @@
 
 from twitchAPI.chat import ChatCommand
-from src.utils import register, cooldown, get_commands, load_commands
-
+from src.utils import register, cooldown, get_commands
+from src.api import load_commands
 
 class MainCommands:
     def __init__(self):
@@ -23,7 +23,6 @@ class MainCommands:
             if cmd.room is not None:
                 channel = self.commands.get(cmd.room.name, {})
                 await cmd.reply(channel.get("тг"))
-                        
         else:
             if cmd.room is not None:
                 channel = self.commands.get(cmd.room.name, {})
