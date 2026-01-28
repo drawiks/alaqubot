@@ -7,25 +7,24 @@ from .config import CLIENT_ID, CLIENT_SECRET, CHANNELS, TOKEN, REFRESH_TOKEN, LO
 
 from .events import MessageEvent, ReadyEvent
 from .commands import MainCommands, FunCommands, UtilityCommands
-from .utils import LogManager, get_commands
+from .utils import logger, get_commands
         
 import asyncio
 class Bot:
     def __init__(self):
         self.USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT]
-        self.log = LogManager(LOG_PATH).logger
         
-        self.message_event = MessageEvent(LOG_PATH)
-        self.ready_event = ReadyEvent(LOG_PATH, CHANNELS)
+        self.message_event = MessageEvent()
+        self.ready_event = ReadyEvent(CHANNELS)
         
         self.main_commands =  MainCommands()
         self.fun_commands = FunCommands()
-        self.utility_commands = UtilityCommands(LOG_PATH)
+        self.utility_commands = UtilityCommands()
     
     async def run(self):
         while True:
             try:
-                self.log.info("init")
+                logger.info("init")
                 self.twitch = Twitch(CLIENT_ID, CLIENT_SECRET)
                 await self.twitch.set_user_authentication(TOKEN, self.USER_SCOPE, REFRESH_TOKEN)
                         
@@ -41,8 +40,8 @@ class Bot:
                     await asyncio.sleep(60)
                 
             except Exception as e:
-                self.log.critical(e)
-                self.log.info("restart")
+                logger.critical(e)
+                logger.info("restart")
             finally:
                 if hasattr(self, 'chat'):
                     self.chat.stop()

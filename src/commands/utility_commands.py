@@ -4,32 +4,29 @@ from twitchAPI.chat import ChatCommand
 from datetime import datetime
 
 from src.utils import (
-    CurrencyConverter, 
-    Horoscope, Film, 
-    get_weather, 
-    get_translate, 
     register, 
     cooldown, 
     permission,
     get_uptime
 )
 
+from src.api import client
+
 class UtilityCommands:
-    def __init__(self, log_path):
+    def __init__(self):
         self.start_time = datetime.now()
-        self.currency_converter = CurrencyConverter(log_path)
-        self.horoscope = Horoscope(log_path)
-        self.film = Film(log_path)
-    
+
     """!доллар"""
     @register("доллар")
     @cooldown(10)
     async def converter_command_handler(self, cmd: ChatCommand):
         if len(cmd.parameter) == 0:
-            await cmd.reply(self.currency_converter.currency(None))
+            result = await client.request("currency")
+            await cmd.reply(result)
         else:
-            await cmd.reply(self.currency_converter.currency(float(cmd.parameter)))
-    
+            result = await client.request("currency", float(cmd.parameter))
+            await cmd.reply(result)
+            
     """!гороскоп"""
     @register("гороскоп")
     @cooldown(30)
@@ -37,15 +34,15 @@ class UtilityCommands:
         if len(cmd.parameter) == 0:
             await cmd.reply("Введи свой знак зодиака! (овен, телец, близнецы, рак, лев, дева, весы, скорпион, стрелец, козерог, водолей, рыбы)")
         else:
-            result = self.horoscope.fetch(str(cmd.parameter))
-            await cmd.reply(result or "Не удалось получить гороскоп для этого знака зодиака.")
+            result = await client.request("horoscope", str(cmd.parameter))
+            await cmd.reply(result)
             
     """!фильм"""
     @register("фильм")
     @cooldown(30)
     async def film_command_handler(self, cmd: ChatCommand):
-        result = self.film.fetch()
-        await cmd.reply(result or "Не удалось получить фильм")
+        result = await client.request("film")
+        await cmd.reply(result)
     
     """!погода"""
     @register("погода")
@@ -54,7 +51,8 @@ class UtilityCommands:
         if len(cmd.parameter) == 0:
             await cmd.reply("Введи название города!")
         else:
-            await cmd.reply(get_weather(str(cmd.parameter)))
+            result = await client.request("weather", str(cmd.parameter))
+            await cmd.reply(result)
     
     """!перевод"""
     @register("перевод")
@@ -63,10 +61,11 @@ class UtilityCommands:
         if len(cmd.parameter) == 0:
             await cmd.reply("Введи текст для перевода!")
         else:
-            await cmd.reply(get_translate(str(cmd.parameter)))
+            result = await client.request("translate", str(cmd.parameter))
+            await cmd.reply(result)
     
     """!uptime"""
     @register("uptime")
-    @permission()
+    @permission(client.users)
     async def uptime_command_handler(self, cmd: ChatCommand):
         await cmd.reply(get_uptime(self.start_time))

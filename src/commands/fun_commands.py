@@ -3,17 +3,18 @@ from twitchAPI.chat import ChatCommand
 
 from random import randint, choice
 
-from src.utils import Cards, get_fact, register, cooldown
+from src.utils import register, cooldown
+from src.api import client
 
 class FunCommands:
     def __init__(self):
-        self.cards = Cards()
+        self.users = client.users
     
     """!спин"""
     @register("спин")
     @cooldown(20)
     async def spin_command_handler(self, cmd: ChatCommand):
-        if cmd.user.name in ["alaqu1337", "lgwxgk"]:
+        if cmd.user.name in self.users:
             if choice([True, False]):
                 symbol = choice(["🍎", "🍒", "🍌", "🍉", "⭐"])
                 text = f"Слоты: {symbol} {symbol} {symbol}"
@@ -34,20 +35,21 @@ class FunCommands:
     @cooldown(30)
     async def card_command_handler(self, cmd: ChatCommand):
         if len(cmd.parameter) == 0:
-            for _ in self.cards.get_cards():
+            for _ in await client.request("cards"):
                 await cmd.reply(_)
         else:
             if int(cmd.parameter) <= 5:
-                for _ in self.cards.get_cards(int(cmd.parameter)):
+                for _ in await client.request("cards", int(cmd.parameter)):
                     await cmd.reply(_)
             else:
-                await cmd.reply("Дохуя просишь братик) https://t.me/alaquu")
+                await cmd.reply("Дохуя просишь братик)")
     
     """!факт"""
     @register("факт")
     @cooldown(20)
     async def fact_command_handler(self, cmd: ChatCommand):
-        await cmd.reply(get_fact())
+        result = await client.request("fact")
+        await cmd.reply(result)
     
     """!монетка"""
     @register("монетка")

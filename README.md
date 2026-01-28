@@ -1,9 +1,8 @@
-
 <div align="center">
     <h1>🤡 alaqubot</h1>
     <img height="20" alt="Python 3.11+" src="https://img.shields.io/badge/python-3.11+-blue">
     <img height="20" alt="License Apache 2.0" src="https://img.shields.io/badge/license-MIT-green">
-    <img height="20" alt="Status" src="https://img.shields.io/badge/status-pet--project-orange">
+    <img height="20" alt="Status" src="https://img.shields.io/badge/status-release-red">
     <p><strong>alaqubot</strong> — это twitch-бот для стримера alaqu1337</p>
     <blockquote>(─‿‿─)</blockquote>
 </div>
@@ -29,6 +28,9 @@
 alaqubot/
 │
 ├── src/
+│   ├── api/
+│   │   ├── __init__.py
+│   │   └── client.py
 │   ├── commands/
 │   │   ├── __init__.py
 │   │   ├── main_commands.py
@@ -40,15 +42,12 @@ alaqubot/
 │   │   └── on_ready.py
 │   ├── utils/
 │   │   ├── __init__.py
-│   │   ├── cooldown.py     # --- задержка для команд ---
-│   │   ├── get_currency.py # --- курс доллара ---
-│   │   ├── get_stream.py   # --- получение информации про стрим ---
-│   │   ├── fact.py         # --- случайный факт ---
-│   │   ├── cards.py        # --- случайная карта ---
-│   │   ├── horoscope.py    # --- гороскоп ---
-│   │   ├── translate.py    # --- переводчик ---
-│   │   ├── weather.py      # --- получение погоды ---
-│   │   └── logger.py       # --- логирование ---
+│   │   ├── cooldown.py         # --- задержка для команд ---
+│   │   ├── uptime.py           # --- время работы бота ---
+│   │   ├── register_command.py # --- регистрация команд ---
+│   │   ├── permission.py       # --- права команд ---
+│   │   ├── cache.py            # --- кеширование ---
+│   │   └── logger.py           # --- логирование ---
 │   │
 │   ├── bot.py
 │   ├── config.py
@@ -82,12 +81,14 @@ alaqubot/
 - !шар
 - !карты
 - !факт
+- !зона
 
 --- utility ---
 - !доллар
 - !гороскоп
 - !погода
 - !перевод
+- !фильм
 ```
 
 ---
@@ -98,40 +99,50 @@ from twitchAPI.twitch import Twitch
 from twitchAPI.type import AuthScope, ChatEvent
 from twitchAPI.chat import Chat
 
-from .config import CLIENT_ID, CLIENT_SECRET, CHANNEL, TOKEN, REFRESH_TOKEN, LOG_PATH
+from .config import CLIENT_ID, CLIENT_SECRET, CHANNELS, TOKEN, REFRESH_TOKEN, LOG_PATH
 
 from .events import MessageEvent, ReadyEvent
 from .commands import MainCommands, FunCommands, UtilityCommands
-from .utils import LogManager, get_commands
+from .utils import logger, get_commands
         
+import asyncio
 class Bot:
     def __init__(self):
         self.USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT]
-        self.log = LogManager(LOG_PATH).logger
         
-        self.message_event = MessageEvent(LOG_PATH)
-        self.ready_event = ReadyEvent(LOG_PATH, CHANNEL)
+        self.message_event = MessageEvent()
+        self.ready_event = ReadyEvent(CHANNELS)
         
         self.main_commands =  MainCommands()
         self.fun_commands = FunCommands()
-        self.utility_commands = UtilityCommands(LOG_PATH)
+        self.utility_commands = UtilityCommands()
     
     async def run(self):
-        self.twitch = Twitch(CLIENT_ID, CLIENT_SECRET)
-        for _ in range(3):
-            await self.twitch.set_user_authentication(TOKEN, self.USER_SCOPE, REFRESH_TOKEN)
+        while True:
+            try:
+                logger.info("init")
+                self.twitch = Twitch(CLIENT_ID, CLIENT_SECRET)
+                await self.twitch.set_user_authentication(TOKEN, self.USER_SCOPE, REFRESH_TOKEN)
+                        
+                self.chat = await Chat(self.twitch)
+                self.chat.no_message_reset_time = 5
+                    
+                await self.register_events()
+                await self.register_commands()
                 
-        self.chat = await Chat(self.twitch)
-            
-        await self.register_events()
-        await self.register_commands()
-            
-        try:
-            self.chat.start()
-        except Exception as e:
-            self.log.critical(e)
-        finally:
-            await self.twitch.close()
+                self.chat.start()
+                
+                while True:
+                    await asyncio.sleep(60)
+                
+            except Exception as e:
+                logger.critical(e)
+                logger.info("restart")
+            finally:
+                if hasattr(self, 'chat'):
+                    self.chat.stop()
+                await self.twitch.close()
+            await asyncio.sleep(15)
 
     async def register_events(self):
         self.chat.register_event(ChatEvent.MESSAGE, self.message_event.on_message)
@@ -139,7 +150,7 @@ class Bot:
     
     async def register_commands(self):
         commands = get_commands()
-        for cmd_name, (func, owner_name) in commands.items():
+        for cmd_name, (func, owner_name, is_public) in commands.items():
             target = None
             for candidate in (self.main_commands, self.fun_commands, self.utility_commands):
                 if candidate.__class__.__name__ == owner_name:
@@ -164,11 +175,14 @@ twitchAPI==4.5.0
 # --- config ---
 environs==14.3.0
 
+# --- database ---
+cachetools==6.2.4
+
 # --- logs ---
 loguru==0.7.3
 
 # --- web ---
-aiohttp==3.12.15
+httpx==0.28.1
 beautifulsoup4==4.13.5
 
 # --- api ---

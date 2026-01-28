@@ -1,13 +1,12 @@
 
 from twitchAPI.chat import EventData
 
-from src.utils import LogManager
+from src.utils import logger
 
 class ReadyEvent:
-    def __init__(self, log_path, channel):
-        self.log = LogManager(log_path).logger
+    def __init__(self, channel):
         self.channel = channel
 
     async def on_ready(self, ready_event: EventData):
-        self.log.info('✅ Бот готов к работе, подключение к каналу')
+        logger.info('✅ Бот готов к работе, подключение к каналу')
         await ready_event.chat.join_room(self.channel)
