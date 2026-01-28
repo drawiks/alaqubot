@@ -1,13 +1,13 @@
 
 from twitchAPI.chat import ChatCommand
 
-from src.api import load_users
+from src.api import client
 
 from functools import wraps
 import time
 
 def cooldown(seconds=30, per_user=True):
-    ignore_users = load_users()["users"]
+    ignore_users = client.users
     cooldowns = {}
 
     def decorator(func):

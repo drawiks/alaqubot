@@ -1,11 +1,12 @@
 
 from twitchAPI.chat import ChatCommand
+
 from src.utils import register, cooldown, get_commands
-from src.api import load_commands
+from src.api import client
 
 class MainCommands:
     def __init__(self):
-        self.commands = load_commands()
+        self.commands = client.commands
     
     """!команды"""
     @register("команды")

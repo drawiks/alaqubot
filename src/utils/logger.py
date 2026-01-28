@@ -1,4 +1,6 @@
 
+from src.config import LOG_PATH
+
 class LogManager:
     
     _instance = None 
@@ -33,3 +35,5 @@ class LogManager:
         )
 
         self.logger = logger
+        
+logger = LogManager(LOG_PATH).logger
