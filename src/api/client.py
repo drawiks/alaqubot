@@ -10,6 +10,8 @@ class APIClient:
     def __init__(self):
         self.commands = self._data("commands")
         self.users = self._data("users")["users"]
+        
+        self.client = httpx.AsyncClient(timeout=10.0, http2=True)
     
     def _data(self, endpoint: str):
         try:
@@ -36,16 +38,15 @@ class APIClient:
             url = f"{url}/{arg}"
 
         try:
-            async with httpx.AsyncClient() as client:
-                response = await client.get(url, params=params, timeout=10.0)
+            response = await self.client.get(url, params=params, timeout=10.0)
                 
-                if response.status_code == 200:
-                    logger.success(f"success fetching {endpoint}")
-                    data = response.json()
-                    return data.get("data")
-                else:
-                    logger.error(f"API error {response.status_code} for {endpoint}")
-                    return "Ошибка на стороне API"
+            if response.status_code == 200:
+                logger.success(f"success fetching {endpoint}")
+                data = response.json()
+                return data.get("data")
+            else:
+                logger.error(f"API error {response.status_code} for {endpoint}")
+                return "Ошибка на стороне API"
         except Exception as e:
             logger.error(f"Сбой связи с API: {e}")
             return "Сервер API временно недоступен"
