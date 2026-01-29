@@ -23,8 +23,8 @@ class APIClient:
             logger.error(f"Сбой связи с API: {e}")
         return {}
         
-    async def request(self, endpoint: str, arg: Any = None):
-        query_services = ["currency", "cards", "translate"]
+    async def request(self, endpoint: str, arg: Any = None) -> Any:
+        query_services = ["currency", "cards", "translate", "wiki"]
         url = f"{self.BASE_URL}/services/{endpoint}"
         params = {}
         
@@ -33,6 +33,7 @@ class APIClient:
                 case "currency": key = "amount"
                 case "cards": key = "count"
                 case "translate": key = "text"
+                case "wiki": key = "article"
             params[key] = arg
         elif arg:
             url = f"{url}/{arg}"
