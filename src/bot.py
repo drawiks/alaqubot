@@ -1,13 +1,11 @@
 
 from twitchAPI.twitch import Twitch
 from twitchAPI.type import AuthScope, ChatEvent
-from twitchAPI.eventsub.websocket import EventSubWebsocket
-from twitchAPI.helper import first
 from twitchAPI.chat import Chat
 
 from .config import CLIENT_ID, CLIENT_SECRET, CHANNELS, TOKEN, REFRESH_TOKEN
 
-from .events import MessageEvent, ReadyEvent, RaidEvent, FollowEvent
+from .events import MessageEvent, ReadyEvent
 from .commands import MainCommands, FunCommands, UtilityCommands
 from .utils import logger, get_commands
         
