@@ -5,7 +5,7 @@ from twitchAPI.eventsub.websocket import EventSubWebsocket
 from twitchAPI.helper import first
 from twitchAPI.chat import Chat
 
-from .config import CLIENT_ID, CLIENT_SECRET, CHANNELS, TOKEN, REFRESH_TOKEN, LOG_PATH
+from .config import CLIENT_ID, CLIENT_SECRET, CHANNELS, TOKEN, REFRESH_TOKEN
 
 from .events import MessageEvent, ReadyEvent, RaidEvent, FollowEvent
 from .commands import MainCommands, FunCommands, UtilityCommands
@@ -32,29 +32,11 @@ class Bot:
                         
                 self.chat = await Chat(self.twitch)
                 self.chat.no_message_reset_time = 5
-                
-                self.raid_event = RaidEvent(self.chat)
-                self.follow_event = FollowEvent(self.chat)
-                
-                self.user = await first(self.twitch.get_users(logins=CHANNELS))
-                
-                self.eventsub = EventSubWebsocket(self.twitch)
                     
                 await self.register_events()
                 await self.register_commands()
                 
                 self.chat.start()
-                self.eventsub.start()
-                
-                await self.eventsub.listen_channel_raid(
-                    to_broadcaster_user_id=self.user.id, 
-                    callback=self.raid_event.on_raid
-                )
-                await self.eventsub.listen_channel_follow_v2(
-                    broadcaster_user_id=self.user.id, 
-                    moderator_user_id=self.user.id, 
-                    callback=self.follow_event.on_follow
-                )
                 
                 while True:
                     await asyncio.sleep(60)
