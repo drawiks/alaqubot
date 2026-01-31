@@ -52,4 +52,21 @@ class APIClient:
             logger.error(f"Сбой связи с API: {e}")
             return "Сервер API временно недоступен"
         
+    async def post_request(self, endpoint: str, data: dict) -> Any:
+        url = f"{self.BASE_URL}/services/{endpoint}"
+        
+        try:
+            response = await self.client.post(url, json=data, timeout=15.0)
+            
+            if response.status_code == 200:
+                logger.success(f"success fetching {endpoint}")
+                res_data = response.json()
+                return res_data.get("data")
+            else:
+                logger.error(f"API error {response.status_code} for {endpoint}")
+                return "Ошибка ИИ на стороне сервера"
+        except Exception as e:
+            logger.error(f"Сбой связи с API (POST): {e}")
+            return "Мозг бота сейчас не в сети"
+        
 client = APIClient()
