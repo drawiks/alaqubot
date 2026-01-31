@@ -80,7 +80,6 @@ class Bot:
     async def register_events(self):
         self.chat.register_event(ChatEvent.MESSAGE, self.message_event.on_message)
         self.chat.register_event(ChatEvent.READY, self.ready_event.on_ready)
-        self.chat.register_event(ChatEvent.RAID, self.ready_event.on_ready)
     
     async def register_commands(self):
         commands = get_commands()
