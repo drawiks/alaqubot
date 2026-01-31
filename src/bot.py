@@ -7,14 +7,14 @@ from twitchAPI.chat import Chat
 
 from .config import CLIENT_ID, CLIENT_SECRET, CHANNELS, TOKEN, REFRESH_TOKEN, LOG_PATH
 
-from .events import MessageEvent, ReadyEvent, RaidEvent, FollowEvent, SubscribeEvent
+from .events import MessageEvent, ReadyEvent, RaidEvent, FollowEvent
 from .commands import MainCommands, FunCommands, UtilityCommands
 from .utils import logger, get_commands
         
 import asyncio
 class Bot:
     def __init__(self):
-        self.USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT, AuthScope.MODERATOR_READ_FOLLOWERS, AuthScope.CHANNEL_READ_SUBSCRIPTIONS]
+        self.USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT, AuthScope.MODERATOR_READ_FOLLOWERS]
         
         self.message_event = MessageEvent()
         self.ready_event = ReadyEvent(CHANNELS)
@@ -35,7 +35,6 @@ class Bot:
                 
                 self.raid_event = RaidEvent(self.chat)
                 self.follow_event = FollowEvent(self.chat)
-                self.subscribe_event = SubscribeEvent(self.chat)
                 
                 self.user = await first(self.twitch.get_users(logins=CHANNELS))
                 
@@ -55,10 +54,6 @@ class Bot:
                     broadcaster_user_id=self.user.id, 
                     moderator_user_id=self.user.id, 
                     callback=self.follow_event.on_follow
-                )
-                await self.eventsub.listen_channel_subscribe(
-                    broadcaster_user_id=self.user.id,
-                    callback=self.subscribe_event.on_sub
                 )
                 
                 while True:
