@@ -14,7 +14,7 @@ from .utils import logger, get_commands
 import asyncio
 class Bot:
     def __init__(self):
-        self.USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT]
+        self.USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT, AuthScope.MODERATOR_READ_FOLLOWERS, AuthScope.CHANNEL_READ_SUBSCRIPTIONS]
         
         self.message_event = MessageEvent()
         self.ready_event = ReadyEvent(CHANNELS)
@@ -49,7 +49,6 @@ class Bot:
                 
                 await self.eventsub.listen_channel_raid(
                     to_broadcaster_user_id=self.user.id, 
-                    from_broadcaster_user_id=self.user.id, 
                     callback=self.raid_event.on_raid
                 )
                 await self.eventsub.listen_channel_follow_v2(
