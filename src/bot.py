@@ -14,7 +14,7 @@ from .utils import logger, get_commands
 import asyncio
 class Bot:
     def __init__(self):
-        self.USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT, AuthScope.MODERATOR_READ_FOLLOWERS]
+        self.USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT]
         
         self.message_event = MessageEvent()
         self.ready_event = ReadyEvent(CHANNELS)
