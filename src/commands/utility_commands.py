@@ -53,6 +53,13 @@ class UtilityCommands:
     async def film_command_handler(self, cmd: ChatCommand):
         result = await client.request("film")
         await cmd.reply(result)
+        
+    """!майнкрафт"""
+    @register("майнкрафт")
+    @cooldown(30)
+    async def minecraft_command_handler(self, cmd: ChatCommand):
+        result = await client.request("minecraft")
+        await cmd.reply(result)
     
     """!погода"""
     @register("погода")
