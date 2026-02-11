@@ -7,7 +7,7 @@ from .config import CLIENT_ID, CLIENT_SECRET, CHANNELS, TOKEN, REFRESH_TOKEN
 
 from .events import MessageEvent, ReadyEvent
 from .commands import MainCommands, FunCommands, UtilityCommands
-from .utils import logger, get_commands
+from .utils import logger, get_methods
         
 import asyncio
 class Bot:
@@ -17,9 +17,7 @@ class Bot:
         self.message_event = MessageEvent()
         self.ready_event = ReadyEvent(CHANNELS)
         
-        self.main_commands =  MainCommands()
-        self.fun_commands = FunCommands()
-        self.utility_commands = UtilityCommands()
+        self.groups = [MainCommands(), FunCommands(), UtilityCommands()]
     
     async def run(self):
         while True:
@@ -56,17 +54,7 @@ class Bot:
         self.chat.register_event(ChatEvent.READY, self.ready_event.on_ready)
     
     async def register_commands(self):
-        commands = get_commands()
-        for command, (func, owner_name, is_public) in commands.items():
-            target = None
-            for candidate in (self.main_commands, self.fun_commands, self.utility_commands):
-                if candidate.__class__.__name__ == owner_name:
-                    target = candidate
-                    break
-
-            if target is None:
-                target = self.main_commands
-
-            bound = func.__get__(target, target.__class__)
-            self.chat.register_command(command, bound)
-        
+        for group in self.groups:
+            commands = get_methods(group)
+            for cmd in commands:
+                self.chat.register_command(cmd["name"], cmd["func"])
