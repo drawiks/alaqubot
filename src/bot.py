@@ -3,7 +3,7 @@ from twitchAPI.twitch import Twitch
 from twitchAPI.type import AuthScope, ChatEvent
 from twitchAPI.chat import Chat
 
-from .config import CLIENT_ID, CLIENT_SECRET, CHANNELS, TOKEN, REFRESH_TOKEN, LOG_PATH
+from .config import CLIENT_ID, CLIENT_SECRET, CHANNELS, TOKEN, REFRESH_TOKEN
 
 from .events import MessageEvent, ReadyEvent
 from .commands import MainCommands, FunCommands, UtilityCommands
@@ -45,7 +45,10 @@ class Bot:
             finally:
                 if hasattr(self, 'chat'):
                     self.chat.stop()
-                await self.twitch.close()
+                if hasattr(self, 'eventsub'):
+                    await self.eventsub.stop()
+                if hasattr(self, 'twitch'):
+                    await self.twitch.close()
             await asyncio.sleep(15)
 
     async def register_events(self):
@@ -54,7 +57,7 @@ class Bot:
     
     async def register_commands(self):
         commands = get_commands()
-        for cmd_name, (func, owner_name, is_public) in commands.items():
+        for command, (func, owner_name, is_public) in commands.items():
             target = None
             for candidate in (self.main_commands, self.fun_commands, self.utility_commands):
                 if candidate.__class__.__name__ == owner_name:
@@ -65,5 +68,5 @@ class Bot:
                 target = self.main_commands
 
             bound = func.__get__(target, target.__class__)
-            self.chat.register_command(cmd_name, bound)
+            self.chat.register_command(command, bound)
         

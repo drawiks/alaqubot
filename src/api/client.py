@@ -10,6 +10,8 @@ class APIClient:
     def __init__(self):
         self.commands = self._data("commands")
         self.users = self._data("users")["users"]
+        
+        self.client = httpx.AsyncClient(timeout=10.0, http2=True)
     
     def _data(self, endpoint: str):
         try:
@@ -21,8 +23,8 @@ class APIClient:
             logger.error(f"Сбой связи с API: {e}")
         return {}
         
-    async def request(self, endpoint: str, arg: Any = None):
-        query_services = ["currency", "cards", "translate"]
+    async def request(self, endpoint: str, arg: Any = None) -> Any:
+        query_services = ["currency", "cards", "translate", "wiki"]
         url = f"{self.BASE_URL}/services/{endpoint}"
         params = {}
         
@@ -31,23 +33,40 @@ class APIClient:
                 case "currency": key = "amount"
                 case "cards": key = "count"
                 case "translate": key = "text"
+                case "wiki": key = "article"
             params[key] = arg
         elif arg:
             url = f"{url}/{arg}"
 
         try:
-            async with httpx.AsyncClient() as client:
-                response = await client.get(url, params=params, timeout=10.0)
+            response = await self.client.get(url, params=params, timeout=10.0)
                 
-                if response.status_code == 200:
-                    logger.success(f"success fetching {endpoint}")
-                    data = response.json()
-                    return data.get("data")
-                else:
-                    logger.error(f"API error {response.status_code} for {endpoint}")
-                    return "Ошибка на стороне API"
+            if response.status_code == 200:
+                logger.success(f"success fetching {endpoint}")
+                data = response.json()
+                return data.get("data")
+            else:
+                logger.error(f"API error {response.status_code} for {endpoint}")
+                return "Ошибка на стороне API"
         except Exception as e:
             logger.error(f"Сбой связи с API: {e}")
             return "Сервер API временно недоступен"
+        
+    async def post_request(self, endpoint: str, data: dict) -> Any:
+        url = f"{self.BASE_URL}/services/{endpoint}"
+        
+        try:
+            response = await self.client.post(url, json=data, timeout=15.0)
+            
+            if response.status_code == 200:
+                logger.success(f"success fetching {endpoint}")
+                res_data = response.json()
+                return res_data.get("data")
+            else:
+                logger.error(f"API error {response.status_code} for {endpoint}")
+                return "Ошибка ИИ на стороне сервера"
+        except Exception as e:
+            logger.error(f"Сбой связи с API (POST): {e}")
+            return "Мозг бота сейчас не в сети"
         
 client = APIClient()

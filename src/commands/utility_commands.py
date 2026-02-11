@@ -36,12 +36,29 @@ class UtilityCommands:
         else:
             result = await client.request("horoscope", str(cmd.parameter))
             await cmd.reply(result)
+    
+    """!вики"""
+    @register("вики")
+    @cooldown(30)
+    async def wiki_command_handler(self, cmd: ChatCommand):
+        if len(cmd.parameter) == 0:
+            await cmd.reply("Введи название статьи!")
+        else:
+            result = await client.request("wiki", str(cmd.parameter))
+            await cmd.reply(result)
             
     """!фильм"""
     @register("фильм")
     @cooldown(30)
     async def film_command_handler(self, cmd: ChatCommand):
         result = await client.request("film")
+        await cmd.reply(result)
+        
+    """!майнкрафт"""
+    @register("майнкрафт")
+    @cooldown(30)
+    async def minecraft_command_handler(self, cmd: ChatCommand):
+        result = await client.request("minecraft")
         await cmd.reply(result)
     
     """!погода"""
