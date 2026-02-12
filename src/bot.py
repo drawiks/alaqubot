@@ -60,5 +60,6 @@ class Bot:
         for group in self.groups:
             group.groups = self.groups
             commands = get_methods(group)
+            logger.debug(f"{group} registred")
             for cmd in commands:
                 self.chat.register_command(cmd["name"], cmd["func"])
