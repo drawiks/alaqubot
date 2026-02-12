@@ -45,8 +45,6 @@ class Bot:
             finally:
                 if hasattr(self, 'chat'):
                     self.chat.stop()
-                if hasattr(self, 'eventsub'):
-                    await self.eventsub.stop()
                 if hasattr(self, 'twitch'):
                     await self.twitch.close()
             await asyncio.sleep(15)
