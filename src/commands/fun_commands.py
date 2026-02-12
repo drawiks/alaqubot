@@ -3,10 +3,10 @@ from twitchAPI.chat import ChatCommand
 
 from random import randint, choice
 
-from src.utils import register, cooldown
+from src.utils import Commands, register, cooldown
 from src.api import client
 
-class FunCommands:
+class FunCommands(Commands):
     def __init__(self):
         self.users = client.users
     

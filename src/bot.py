@@ -6,10 +6,10 @@ from twitchAPI.chat import Chat
 from .config import CLIENT_ID, CLIENT_SECRET, CHANNELS, TOKEN, REFRESH_TOKEN
 
 from .events import MessageEvent, ReadyEvent
-from .commands import MainCommands, FunCommands, UtilityCommands
-from .utils import logger, get_methods
+from .utils import logger, get_methods, load_groups
         
 import asyncio
+import os
 class Bot:
     def __init__(self):
         self.USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT]
@@ -17,7 +17,10 @@ class Bot:
         self.message_event = MessageEvent()
         self.ready_event = ReadyEvent(CHANNELS)
         
-        self.groups = [MainCommands(), FunCommands(), UtilityCommands()]
+        
+        self.dir = os.path.dirname(__file__)
+        self.path = os.path.join(self.dir, "commands")
+        self.groups = load_groups(self.path, "src.commands")
     
     async def run(self):
         while True:
@@ -55,6 +58,7 @@ class Bot:
     
     async def register_commands(self):
         for group in self.groups:
+            group.groups = self.groups
             commands = get_methods(group)
             for cmd in commands:
                 self.chat.register_command(cmd["name"], cmd["func"])

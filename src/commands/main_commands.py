@@ -1,25 +1,32 @@
 
 from twitchAPI.chat import ChatCommand
 
-from src.utils import register, cooldown, get_commands
+from src.utils import Commands, register, get_methods, cooldown
 from src.api import client
 
-class MainCommands:
+class MainCommands(Commands):
     def __init__(self):
         self.commands = client.commands
     
     """!команды"""
     @register("команды")
     async def commands_command_handler(self, cmd: ChatCommand):
-        all_cmds = [name for name, info in get_commands().items() if info[2]]
-        reply = "Команды: !" + ", !".join(sorted(all_cmds))
+        names = []
+        
+        for group in self.groups:
+            methods = get_methods(group)
+            for m in methods:
+                if m.get("public"):
+                    names.append(m["name"])
+                    
+        commands = sorted(list(set(names)))
+        reply = "Команды: !" + ", !".join(commands)
         await cmd.reply(reply)
     
     """!тг"""
     @register("тг")
     @cooldown(30)
     async def tg_command_handler(self, cmd: ChatCommand):
-        
         if len(cmd.parameter) == 0:
             if cmd.room is not None:
                 channel = self.commands.get(cmd.room.name, {})
