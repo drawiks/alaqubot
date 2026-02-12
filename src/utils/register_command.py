@@ -2,7 +2,7 @@
 from typing import Callable, Optional
 import inspect
 
-def register(name: str, allowed_users: Optional[list]):
+def register(name: str, allowed_users: Optional[list] = None):
     def decorator(func: Callable):
         func._is_public = allowed_users is None
         func._is_command = True
