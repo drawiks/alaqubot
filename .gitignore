@@ -1,6 +1,6 @@
 __pycache__/
 output/
 build/
+tests/
 logs/
 .env
-commands.json

@@ -3,16 +3,10 @@ from twitchAPI.chat import ChatCommand
 
 from datetime import datetime
 
-from src.utils import (
-    register, 
-    cooldown, 
-    permission,
-    get_uptime
-)
-
+from src.utils import Commands, register, cooldown, get_uptime
 from src.api import client
 
-class UtilityCommands:
+class UtilityCommands(Commands):
     def __init__(self):
         self.start_time = datetime.now()
 
@@ -82,7 +76,6 @@ class UtilityCommands:
             await cmd.reply(result)
     
     """!uptime"""
-    @register("uptime")
-    @permission(client.users)
+    @register("uptime", client.users)
     async def uptime_command_handler(self, cmd: ChatCommand):
         await cmd.reply(get_uptime(self.start_time))

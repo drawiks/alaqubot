@@ -6,10 +6,10 @@ from twitchAPI.chat import Chat
 from .config import CLIENT_ID, CLIENT_SECRET, CHANNELS, TOKEN, REFRESH_TOKEN
 
 from .events import MessageEvent, ReadyEvent
-from .commands import MainCommands, FunCommands, UtilityCommands
-from .utils import logger, get_commands
+from .utils import logger, get_methods, load_groups
         
 import asyncio
+import os
 class Bot:
     def __init__(self):
         self.USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT]
@@ -17,9 +17,10 @@ class Bot:
         self.message_event = MessageEvent()
         self.ready_event = ReadyEvent(CHANNELS)
         
-        self.main_commands =  MainCommands()
-        self.fun_commands = FunCommands()
-        self.utility_commands = UtilityCommands()
+        
+        self.dir = os.path.dirname(__file__)
+        self.path = os.path.join(self.dir, "commands")
+        self.groups = load_groups(self.path, "src.commands")
     
     async def run(self):
         while True:
@@ -56,17 +57,9 @@ class Bot:
         self.chat.register_event(ChatEvent.READY, self.ready_event.on_ready)
     
     async def register_commands(self):
-        commands = get_commands()
-        for command, (func, owner_name, is_public) in commands.items():
-            target = None
-            for candidate in (self.main_commands, self.fun_commands, self.utility_commands):
-                if candidate.__class__.__name__ == owner_name:
-                    target = candidate
-                    break
-
-            if target is None:
-                target = self.main_commands
-
-            bound = func.__get__(target, target.__class__)
-            self.chat.register_command(command, bound)
-        
+        for group in self.groups:
+            group.groups = self.groups
+            commands = get_methods(group)
+            logger.debug(f"{group} registered")
+            for cmd in commands:
+                self.chat.register_command(cmd["name"], cmd["func"])
