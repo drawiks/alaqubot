@@ -17,7 +17,7 @@ class APIClient:
         try:
             response = requests.get(f"http://127.0.0.1:9090/data/{endpoint}", timeout=5)
             if response.status_code == 200:
-                logger.info(f"success loading {endpoint} data")
+                logger.success(f"success loading {endpoint} data")
                 return response.json() 
         except Exception as e:
             logger.error(f"Сбой связи с API: {e}")
@@ -42,7 +42,7 @@ class APIClient:
             response = await self.client.get(url, params=params, timeout=10.0)
                 
             if response.status_code == 200:
-                logger.info(f"success fetching {endpoint}")
+                logger.success(f"success fetching {endpoint}")
                 data = response.json()
                 return data.get("data")
             else:
@@ -59,7 +59,7 @@ class APIClient:
             response = await self.client.post(url, json=data, timeout=15.0)
             
             if response.status_code == 200:
-                logger.info(f"success fetching {endpoint}")
+                logger.success(f"success fetching {endpoint}")
                 res_data = response.json()
                 return res_data.get("data")
             else:
