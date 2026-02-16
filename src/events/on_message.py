@@ -6,7 +6,7 @@ from src.api import client
 
 class MessageEvent:
     async def on_message(self, msg: ChatMessage):
-        logger.trace(f"|room - {msg.room.name if msg.room else ""}| {msg.user.name}: {msg.text}")
+        logger.debug(f"|room - {msg.room.name if msg.room else ""}| {msg.user.name}: {msg.text}")
         if "@alaqubot" in msg.text.lower():
             text = msg.text.lower().replace("@alaqubot", "").strip()
             
