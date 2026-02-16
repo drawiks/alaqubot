@@ -17,7 +17,6 @@ class Bot:
         self.message_event = MessageEvent()
         self.ready_event = ReadyEvent(CHANNELS)
         
-        
         self.dir = os.path.dirname(__file__)
         self.path = os.path.join(self.dir, "commands")
         self.groups = load_groups(self.path, "src.commands")
@@ -46,8 +45,6 @@ class Bot:
             finally:
                 if hasattr(self, 'chat'):
                     self.chat.stop()
-                if hasattr(self, 'eventsub'):
-                    await self.eventsub.stop()
                 if hasattr(self, 'twitch'):
                     await self.twitch.close()
             await asyncio.sleep(15)
