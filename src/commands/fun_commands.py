@@ -67,6 +67,13 @@ class FunCommands(Commands):
     @register("зона")
     @cooldown(10)
     async def zone_command_handler(self, cmd: ChatCommand):
+        if cmd.user.name is not None and cmd.user.name in self.users:
+            await cmd.reply(choice(["авторитет", "блатной", "вор в законе", "мастер на все руки", "пахан", "крыша", "приблатнённый", "серый кардинал"]))
+        if len(cmd.parameter) != 0:
+            if cmd.parameter.lower() in self.users:
+                await cmd.reply(f"{cmd.parameter.lower().replace('@', '').strip()} {choice(['авторитет', 'блатной', 'вор в законе', 'мастер на все руки', 'пахан', 'крыша', 'приблатнённый'])}")
+            else:
+                await cmd.reply(f"{cmd.parameter.lower().replace('@', '').strip()} {choice(['тихоня', 'мент', 'шестерка', 'авторитет', 'блатной', 'вор в законе', 'опущенный', 'мастер на все руки', 'пахан', 'крыша', 'туз', 'бригадир', 'приблатнённый', 'фуфлыжник', 'серый кардинал'])}")
         await cmd.reply(choice(["тихоня", "мент", "шестерка", "авторитет", "блатной", "вор в законе", "опущенный", "мастер на все руки", "пахан", "крыша", "туз", "бригадир", "приблатнённый", "фуфлыжник", "серый кардинал"]))
     
     """!удар"""
