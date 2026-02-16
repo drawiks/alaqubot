@@ -59,7 +59,7 @@ class APIClient:
             response = await self.client.post(url, json=data, timeout=15.0)
             
             if response.status_code == 200:
-                logger.success(f"success fetching {endpoint}")
+                logger.info(f"success fetching {endpoint}")
                 res_data = response.json()
                 return res_data.get("data")
             else:
