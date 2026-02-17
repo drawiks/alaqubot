@@ -12,7 +12,6 @@ dlogger @ git+https://github.com/drawiks/dlogger.git
 
 # --- web ---
 httpx==0.28.1
-beautifulsoup4==4.13.5
 
 # --- api ---
 deep-translator==1.11.4
