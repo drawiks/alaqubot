@@ -5,9 +5,9 @@ if __name__ == "__main__":
     import asyncio
     
     from pyfiglet import figlet_format
-    from termcolor import colored
+    from dcolor import color
     
-    print(colored(figlet_format("AlaquBot", font="larry3d"), "light_green"))
+    print(color(figlet_format("AlaquBot", font="larry3d"), "#4caf50"))
     
     try:
         bot = Bot()
