@@ -2,11 +2,10 @@
 from twitchAPI.chat import ChatCommand
 
 from src.utils import Commands, register, get_methods, cooldown
-from src.api import client
 
 class MainCommands(Commands):
     def __init__(self):
-        self.commands = client.commands
+        self.commands = self.client.commands
     
     """!команды"""
     @register("команды")
@@ -22,7 +21,6 @@ class MainCommands(Commands):
         commands = sorted(list(set(names)))
         reply = "Команды: !" + ", !".join(commands)
         await cmd.reply(reply)
-        await cmd.reply("Использование: !<команда> <параметр>")
     
     """!тг"""
     @register("тг")
