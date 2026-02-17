@@ -79,9 +79,7 @@ alaqubot/
 - !спин
 - !монетка
 - !ролл
-- !удар
 - !шар
-- !карты
 - !факт
 - !зона
 
@@ -173,21 +171,19 @@ twitchAPI==4.5.0
 # --- config ---
 environs==14.3.0
 
-# --- database ---
+# --- data ---
 cachetools==6.2.4
 
 # --- logs ---
-loguru==0.7.3
+dlogger-drawiks==0.2.1
 
 # --- web ---
 httpx==0.28.1
-beautifulsoup4==4.13.5
 
 # --- api ---
 deep-translator==1.11.4
 
 # --- cli ---
 pyfiglet==1.0.4
-termcolor==3.3.0
+dcolor-drawiks==0.1.0
 ```
-

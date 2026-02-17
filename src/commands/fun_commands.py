@@ -30,20 +30,6 @@ class FunCommands(Commands):
             text = f"Слоты: {spin[0]} {spin[1]} {spin[2]}"
             await cmd.reply(text)
     
-    """!карты"""
-    @register("карты")
-    @cooldown(30)
-    async def card_command_handler(self, cmd: ChatCommand):
-        if len(cmd.parameter) == 0:
-            for _ in await client.request("cards"):
-                await cmd.reply(_)
-        else:
-            if int(cmd.parameter) <= 5:
-                for _ in await client.request("cards", int(cmd.parameter)):
-                    await cmd.reply(_)
-            else:
-                await cmd.reply("Дохуя просишь братик)")
-    
     """!факт"""
     @register("факт")
     @cooldown(20)
@@ -67,25 +53,7 @@ class FunCommands(Commands):
     @register("зона")
     @cooldown(10)
     async def zone_command_handler(self, cmd: ChatCommand):
-        
-        if len(cmd.parameter) != 0:
-            if cmd.user.name is not None and cmd.user.name in self.users:
-                await cmd.reply(choice(["авторитет", "блатной", "вор в законе", "мастер на все руки", "пахан", "крыша", "приблатнённый"]))
-            elif self.users in cmd.parameter.lower().replace('@', '').strip():
-                await cmd.reply(f"{cmd.parameter.lower().replace('@', '').strip()} {choice(['авторитет', 'блатной', 'вор в законе', 'мастер на все руки', 'пахан', 'крыша', 'приблатнённый', 'серый кардинал'])}")
-            else:
-                await cmd.reply(f"{cmd.parameter.lower().replace('@', '').strip()} {choice(['тихоня', 'мент', 'шестерка', 'авторитет', 'блатной', 'вор в законе', 'опущенный', 'мастер на все руки', 'пахан', 'крыша', 'туз', 'бригадир', 'приблатнённый', 'фуфлыжник'])}")
-        else:
-            await cmd.reply(choice(["тихоня", "мент", "шестерка", "авторитет", "блатной", "вор в законе", "опущенный", "мастер на все руки", "пахан", "крыша", "туз", "бригадир", "приблатнённый", "фуфлыжник", "серый кардинал"]))
-    
-    """!удар"""
-    @register("удар")
-    @cooldown(10)
-    async def punch_command_handler(self, cmd: ChatCommand):
-        if len(cmd.parameter) == 0:
-            await cmd.reply("Напиши юзернейм!")
-        else:
-            await cmd.reply(f"Вы ударили - {cmd.parameter}")
+        await cmd.reply(choice(["тихоня", "мент", "шестерка", "авторитет", "блатной", "вор в законе", "опущенный", "мастер на все руки", "пахан", "крыша", "туз", "бригадир", "приблатнённый", "фуфлыжник", "серый кардинал"]))
     
     """!шар"""
     @register("шар")
