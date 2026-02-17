@@ -22,6 +22,7 @@ class MainCommands(Commands):
         commands = sorted(list(set(names)))
         reply = "Команды: !" + ", !".join(commands)
         await cmd.reply(reply)
+        await cmd.reply("Использование: !<команда> <параметр>")
     
     """!тг"""
     @register("тг")
