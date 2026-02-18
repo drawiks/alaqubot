@@ -26,11 +26,11 @@ class MainCommands(Commands):
     async def tg_command_handler(self, cmd: ChatCommand):
         if len(cmd.parameter) == 0:
             if cmd.room is not None:
-                channel = self.commands.get(cmd.room.name, {})
+                channel = self.client.commands.get(cmd.room.name, {})
                 await cmd.reply(channel.get("тг"))
         else:
             if cmd.room is not None:
-                channel = self.commands.get(cmd.room.name, {})
+                channel = self.client.commands.get(cmd.room.name, {})
                 if int(cmd.parameter) <= 5:
                     for _ in range(int(cmd.parameter)):
                         await cmd.reply(channel.get("тг"))
@@ -49,7 +49,7 @@ class MainCommands(Commands):
     @cooldown(30)
     async def guide_command_handler(self, cmd: ChatCommand):
         if cmd.room is not None:
-            channel = self.commands.get(cmd.room.name, {})
+            channel = self.client.commands.get(cmd.room.name, {})
             await cmd.reply(channel.get("гайд"))
     
     """!мейн"""
@@ -57,6 +57,6 @@ class MainCommands(Commands):
     @cooldown(30)
     async def main_command_handler(self, cmd: ChatCommand):
         if cmd.room is not None:
-            channel = self.commands.get(cmd.room.name, {})
+            channel = self.client.commands.get(cmd.room.name, {})
             await cmd.reply(channel.get("мейн"))
         
