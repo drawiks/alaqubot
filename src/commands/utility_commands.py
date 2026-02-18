@@ -30,16 +30,6 @@ class UtilityCommands(Commands):
         else:
             result = await self.client.request("horoscope", str(cmd.parameter))
             await cmd.reply(result)
-    
-    """!вики"""
-    @register("вики")
-    @cooldown(30)
-    async def wiki_command_handler(self, cmd: ChatCommand):
-        if len(cmd.parameter) == 0:
-            await cmd.reply("Введи название статьи!")
-        else:
-            result = await self.client.request("wiki", str(cmd.parameter))
-            await cmd.reply(result)
             
     """!фильм"""
     @register("фильм")
