@@ -1,6 +1,7 @@
 
 from typing import Any
-import httpx, requests
+import asyncio
+import httpx
 
 from src.utils import logger
 
@@ -8,19 +9,30 @@ class APIClient:
     BASE_URL = "http://127.0.0.1:9090"
     
     def __init__(self):
-        self.commands = self._data("commands")
-        self.users = self._data("users")["users"]
+        self.commands = {}
+        self.users = []
         
         self.client = httpx.AsyncClient(timeout=10.0, http2=True)
     
-    def _data(self, endpoint: str):
-        try:
-            response = requests.get(f"http://127.0.0.1:9090/data/{endpoint}", timeout=5)
-            if response.status_code == 200:
-                logger.success(f"success loading {endpoint} data")
-                return response.json() 
-        except Exception as e:
-            logger.error(f"Сбой связи с API: {e}")
+    async def load_data(self, retries=3, delay=5):
+        for attempt in range(retries):
+            try:
+                commands = await self._async_data("commands")
+                users_data = await self._async_data("users")
+                self.commands = commands or {}
+                self.users = users_data.get("users", []) if users_data else []
+                logger.success("data loaded")
+                return
+            except Exception as e:
+                logger.warning(f"attempt {attempt+1}/{retries} failed: {e}")
+                if attempt < retries - 1:
+                    await asyncio.sleep(delay)
+        logger.error("Не удалось загрузить данные после нескольких попыток")
+    
+    async def _async_data(self, endpoint: str):
+        response = await self.client.get(f"{self.BASE_URL}/data/{endpoint}", timeout=5)
+        if response.status_code == 200:
+            return response.json()
         return {}
         
     async def request(self, endpoint: str, arg: Any = None) -> Any:

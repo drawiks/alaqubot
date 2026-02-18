@@ -1,18 +1,26 @@
 
 from twitchAPI.chat import ChatMessage
 from typing import Any
+import time
 
 from src.utils import logger
 
 class MessageEvent:
     def __init__(self, client: Any = None):
         self.client = client
+        self._cooldowns = {}
     
     async def on_message(self, msg: ChatMessage):
         logger.trace(f"|room - {msg.room.name if msg.room else ""}| {msg.user.name}: {msg.text}")
         if "@alaqubot" in msg.text.lower():
+            now = time.time()
+            last = self._cooldowns.get(msg.user.name, 0)
+            if now - last < 15: return
+
+            self._cooldowns[msg.user.name] = now
+
             text = msg.text.lower().replace("@alaqubot", "").strip()
-            
-            response = await self.client.post_request("groq", {"text":text})
-            
+            if not text: return
+
+            response = await self.client.post_request("groq", {"text": text})
             await msg.chat.send_message(msg.room.name, f"@{msg.user.name} {response}")
