@@ -4,12 +4,10 @@ from twitchAPI.chat import ChatCommand
 from src.utils import Commands, register, get_methods, cooldown
 
 class MainCommands(Commands):
-    def __init__(self):
-        self.commands = self.client.commands
-    
     """!команды"""
     @register("команды")
     async def commands_command_handler(self, cmd: ChatCommand):
+        commands = self.client.commands
         names = []
         
         for group in self.groups:

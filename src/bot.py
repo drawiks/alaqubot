@@ -20,7 +20,7 @@ class Bot:
         
         self.dir = os.path.dirname(__file__)
         self.path = os.path.join(self.dir, "commands")
-        self.groups = load_groups(self.path, "src.commands")
+        self.groups = load_groups(self.path, "src.commands", client)
     
     async def run(self):
         while True:
@@ -56,8 +56,6 @@ class Bot:
     
     async def register_commands(self):
         for group in self.groups:
-            group.groups = self.groups
-            group.client = client
             commands = get_methods(group)
             logger.debug(f"{group} registered")
             for cmd in commands:

@@ -6,14 +6,12 @@ from random import randint, choice
 from src.utils import Commands, register, cooldown
 
 class FunCommands(Commands):
-    def __init__(self):
-        self.users = self.client.users
-    
     """!спин"""
     @register("спин")
     @cooldown(20)
     async def spin_command_handler(self, cmd: ChatCommand):
-        if cmd.user.name in self.users:
+        users = self.client.users
+        if cmd.user.name in users:
             if choice([True, False]):
                 symbol = choice(["🍎", "🍒", "🍌", "🍉", "⭐"])
                 text = f"Слоты: {symbol} {symbol} {symbol}"
