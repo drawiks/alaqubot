@@ -6,7 +6,8 @@ from datetime import datetime
 from src.utils import Commands, register, cooldown, get_uptime
 
 class UtilityCommands(Commands):
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.start_time = datetime.now()
 
     """!доллар"""
