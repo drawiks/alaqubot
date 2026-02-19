@@ -76,7 +76,7 @@ class UtilityCommands(Commands):
     @register("mmr")
     @cooldown(10)
     async def mmr_command_handler(self, cmd: ChatCommand):
-        result = await self.client.request("mmr", str(cmd.room.name))
+        result = await self.client.request("get_mmr", str(cmd.room.name))
         await cmd.reply(result)
         
     """!setmmr"""
