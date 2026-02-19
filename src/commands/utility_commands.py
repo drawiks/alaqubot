@@ -76,13 +76,24 @@ class UtilityCommands(Commands):
     @register("mmr")
     @cooldown(10)
     async def mmr_command_handler(self, cmd: ChatCommand):
-        await cmd.reply("mmr")
+        result = await self.client.request("mmr", str(cmd.room.name))
+        await cmd.reply(result)
         
     """!setmmr"""
     @register("setmmr", False)
     async def set_mmr_command_handler(self, cmd: ChatCommand):
         if cmd.user.name in self.client.users:
-            await cmd.reply("setmmr")
+            if cmd.parameter.isdigit():
+                await cmd.reply(self.client.post_request("set_mmr", {"username": cmd.room.name, "mmr": cmd.parameter}))
+            else: await cmd.reply("Введи число!")
+        else: await cmd.reply("У тебя нет прав на эту команду!")
+            
+    """!setid"""
+    @register("setid", False)
+    async def set_id_command_handler(self, cmd: ChatCommand):
+        if cmd.user.name in self.client.users:
+            await cmd.reply("setid")
+        else: await cmd.reply("У тебя нет прав на эту команду!")
         
     """!uptime"""
     @register("uptime", False)
