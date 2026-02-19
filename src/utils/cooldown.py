@@ -1,10 +1,9 @@
 
-from cachetools import TTLCache
 from functools import wraps
 import time
 
 def cooldown(seconds=30, per_user=True):
-    cooldowns = TTLCache(maxsize=1000, ttl=seconds)
+    cooldowns = {}
     def decorator(func):
         @wraps(func)
         async def wrapper(self, cmd, *args, **kwargs):
@@ -13,13 +12,13 @@ def cooldown(seconds=30, per_user=True):
                 return await func(self, cmd, *args, **kwargs)
 
             key = (cmd.user.name, func.__name__) if per_user else func.__name__
-            if key in cooldowns:
-                wait = round(seconds - (time.time() - cooldowns[key]), 1)
+            now = time.time()
+            last = cooldowns.get(key, 0)
+            if now - last < seconds:
+                wait = round(seconds - (now - last), 1)
                 await cmd.reply(f"Подожди {wait} сек!")
                 return
-            
-            cooldowns[key] = time.time()
-            
+            cooldowns[key] = now
             return await func(self, cmd, *args, **kwargs)
         return wrapper
     return decorator
