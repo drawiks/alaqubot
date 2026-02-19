@@ -65,7 +65,42 @@ class UtilityCommands(Commands):
             result = await self.client.request("translate", str(cmd.parameter))
             await cmd.reply(result)
     
+    """!wl"""
+    @register("wl")
+    @cooldown(30)
+    async def wl_command_handler(self, cmd: ChatCommand):
+        result = await self.client.request("wl", str(cmd.room.name))
+        await cmd.reply(result)
+        
+    """!mmr"""
+    @register("mmr")
+    @cooldown(10)
+    async def mmr_command_handler(self, cmd: ChatCommand):
+        result = await self.client.request("get_mmr", str(cmd.room.name))
+        await cmd.reply(result)
+        
+    """!setmmr"""
+    @register("setmmr", False)
+    async def set_mmr_command_handler(self, cmd: ChatCommand):
+        if cmd.user.name in self.client.users:
+            if cmd.parameter.isdigit():
+                response = await self.client.post_request("set_mmr", {"username": cmd.room.name, "mmr": cmd.parameter})
+                await cmd.reply(response)
+            else: await cmd.reply("Введи число!")
+        else: await cmd.reply("У тебя нет прав на эту команду!")
+            
+    """!setid"""
+    @register("setid", False)
+    async def set_id_command_handler(self, cmd: ChatCommand):
+        if cmd.user.name in self.client.users:
+            if cmd.parameter.isdigit():
+                response = await self.client.post_request("set_id", {"username": cmd.room.name, "dota_id": cmd.parameter})
+                await cmd.reply(response)
+            else: await cmd.reply("Введи айди!")
+        else: await cmd.reply("У тебя нет прав на эту команду!")
+        
     """!uptime"""
     @register("uptime", False)
     async def uptime_command_handler(self, cmd: ChatCommand):
-        await cmd.reply(get_uptime(self.start_time))
+        if cmd.user.name in self.client.users:
+            await cmd.reply(get_uptime(self.start_time))
