@@ -93,7 +93,10 @@ class UtilityCommands(Commands):
     @register("setid", False)
     async def set_id_command_handler(self, cmd: ChatCommand):
         if cmd.user.name in self.client.users:
-            await cmd.reply("setid")
+            if cmd.parameter.isdigit():
+                response = await self.client.post_request("set_id", {"username": cmd.room.name, "dota_id": cmd.parameter})
+                await cmd.reply(response)
+            else: await cmd.reply("Введи айди!")
         else: await cmd.reply("У тебя нет прав на эту команду!")
         
     """!uptime"""
