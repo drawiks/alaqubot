@@ -84,7 +84,8 @@ class UtilityCommands(Commands):
     async def set_mmr_command_handler(self, cmd: ChatCommand):
         if cmd.user.name in self.client.users:
             if cmd.parameter.isdigit():
-                await cmd.reply(self.client.post_request("set_mmr", {"username": cmd.room.name, "mmr": cmd.parameter}))
+                response = await self.client.post_request("set_mmr", {"username": cmd.room.name, "mmr": cmd.parameter})
+                await cmd.reply(response)
             else: await cmd.reply("Введи число!")
         else: await cmd.reply("У тебя нет прав на эту команду!")
             
