@@ -1,17 +1,24 @@
-
 from src.bot import Bot
+from src.api import client
+import asyncio
+
+async def update_data():
+    while True:
+        await asyncio.sleep(3600)
+        await client.load_data()
+
+async def main():
+    bot = Bot()
+    await asyncio.gather(bot.run(), update_data())
 
 if __name__ == "__main__":
-    import asyncio
-    
     from pyfiglet import figlet_format
     from dcolor import color
     
     print(color(figlet_format("AlaquBot", font="larry3d"), "#4caf50"))
     
     try:
-        bot = Bot()
-        asyncio.run(bot.run())
+        asyncio.run(main())
     except KeyboardInterrupt:
         print("bot stopped manually")
     except Exception as e:
