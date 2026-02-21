@@ -27,19 +27,6 @@ class FunCommands(Commands):
             text = f"Слоты: {spin[0]} {spin[1]} {spin[2]}"
             await cmd.reply(text)
     
-    """!факт"""
-    @register("факт")
-    @cooldown(20)
-    async def fact_command_handler(self, cmd: ChatCommand):
-        result = await self.client.request("fact")
-        await cmd.reply(result)
-    
-    """!монетка"""
-    @register("монетка")
-    @cooldown(10)
-    async def coin_command_handler(self, cmd: ChatCommand):
-        await cmd.reply(choice(["Орёл", "Решка"]))
-    
     """!ролл"""
     @register("ролл")
     @cooldown(10)
