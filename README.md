@@ -89,6 +89,10 @@ alaqubot/
 - !перевод
 - !фильм
 - !майнкрафт
+- !wl
+- !mmr
+- !setmmr
+- !setid
 ```
 
 ---
@@ -122,6 +126,8 @@ class Bot:
         while True:
             try:
                 logger.info("init")
+                await client.load_data()
+                
                 self.twitch = Twitch(CLIENT_ID, CLIENT_SECRET)
                 await self.twitch.set_user_authentication(TOKEN, self.USER_SCOPE, REFRESH_TOKEN)
                         
