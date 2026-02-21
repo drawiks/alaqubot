@@ -21,28 +21,11 @@ class UtilityCommands(Commands):
             result = await self.client.request("currency", float(cmd.parameter))
             await cmd.reply(result)
             
-    """!гороскоп"""
-    @register("гороскоп")
-    @cooldown(30)
-    async def horoscope_command_handler(self, cmd: ChatCommand):
-        if len(cmd.parameter) == 0:
-            await cmd.reply("Введи свой знак зодиака! (овен, телец, близнецы, рак, лев, дева, весы, скорпион, стрелец, козерог, водолей, рыбы)")
-        else:
-            result = await self.client.request("horoscope", str(cmd.parameter))
-            await cmd.reply(result)
-            
     """!фильм"""
     @register("фильм")
     @cooldown(30)
     async def film_command_handler(self, cmd: ChatCommand):
         result = await self.client.request("film")
-        await cmd.reply(result)
-        
-    """!майнкрафт"""
-    @register("майнкрафт")
-    @cooldown(30)
-    async def minecraft_command_handler(self, cmd: ChatCommand):
-        result = await self.client.request("minecraft")
         await cmd.reply(result)
     
     """!погода"""
@@ -53,16 +36,6 @@ class UtilityCommands(Commands):
             await cmd.reply("Введи название города!")
         else:
             result = await self.client.request("weather", str(cmd.parameter))
-            await cmd.reply(result)
-    
-    """!перевод"""
-    @register("перевод")
-    @cooldown(10)
-    async def translate_command_handler(self, cmd: ChatCommand):
-        if len(cmd.parameter) == 0:
-            await cmd.reply("Введи текст для перевода!")
-        else:
-            result = await self.client.request("translate", str(cmd.parameter))
             await cmd.reply(result)
     
     """!wl"""

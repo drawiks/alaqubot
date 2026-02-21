@@ -1,0 +1,75 @@
+diff --git a/src/commands/fun_commands.py b/src/commands/fun_commands.py
+index 763eff9..2da362e 100644
+--- a/src/commands/fun_commands.py
++++ b/src/commands/fun_commands.py
+@@ -27,19 +27,6 @@ class FunCommands(Commands):
+             text = f"Слоты: {spin[0]} {spin[1]} {spin[2]}"
+             await cmd.reply(text)
+     
+-    """!факт"""
+-    @register("факт")
+-    @cooldown(20)
+-    async def fact_command_handler(self, cmd: ChatCommand):
+-        result = await self.client.request("fact")
+-        await cmd.reply(result)
+-    
+-    """!монетка"""
+-    @register("монетка")
+-    @cooldown(10)
+-    async def coin_command_handler(self, cmd: ChatCommand):
+-        await cmd.reply(choice(["Орёл", "Решка"]))
+-    
+     """!ролл"""
+     @register("ролл")
+     @cooldown(10)
+diff --git a/src/commands/utility_commands.py b/src/commands/utility_commands.py
+index f8df9c8..df78e33 100644
+--- a/src/commands/utility_commands.py
++++ b/src/commands/utility_commands.py
+@@ -21,29 +21,12 @@ class UtilityCommands(Commands):
+             result = await self.client.request("currency", float(cmd.parameter))
+             await cmd.reply(result)
+             
+-    """!гороскоп"""
+-    @register("гороскоп")
+-    @cooldown(30)
+-    async def horoscope_command_handler(self, cmd: ChatCommand):
+-        if len(cmd.parameter) == 0:
+-            await cmd.reply("Введи свой знак зодиака! (овен, телец, близнецы, рак, лев, дева, весы, скорпион, стрелец, козерог, водолей, рыбы)")
+-        else:
+-            result = await self.client.request("horoscope", str(cmd.parameter))
+-            await cmd.reply(result)
+-            
+     """!фильм"""
+     @register("фильм")
+     @cooldown(30)
+     async def film_command_handler(self, cmd: ChatCommand):
+         result = await self.client.request("film")
+         await cmd.reply(result)
+-        
+-    """!майнкрафт"""
+-    @register("майнкрафт")
+-    @cooldown(30)
+-    async def minecraft_command_handler(self, cmd: ChatCommand):
+-        result = await self.client.request("minecraft")
+-        await cmd.reply(result)
+     
+     """!погода"""
+     @register("погода")
+@@ -55,16 +38,6 @@ class UtilityCommands(Commands):
+             result = await self.client.request("weather", str(cmd.parameter))
+             await cmd.reply(result)
+     
+-    """!перевод"""
+-    @register("перевод")
+-    @cooldown(10)
+-    async def translate_command_handler(self, cmd: ChatCommand):
+-        if len(cmd.parameter) == 0:
+-            await cmd.reply("Введи текст для перевода!")
+-        else:
+-            result = await self.client.request("translate", str(cmd.parameter))
+-            await cmd.reply(result)
+-    
+     """!wl"""
+     @register("wl")
+     @cooldown(30)
