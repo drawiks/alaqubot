@@ -12,8 +12,13 @@ class MessageEvent:
     
     async def on_message(self, msg: ChatMessage):
         logger.trace(f"|room - {msg.room.name if msg.room else ""}| {msg.user.name}: {msg.text}")
+        
+        now = time.time()
+        expired = [u for u, t in self._cooldowns.items() if now - t >= 15]
+        for u in expired:
+            del self._cooldowns[u]
+        
         if "@alaqubot" in msg.text.lower():
-            now = time.time()
             last = self._cooldowns.get(msg.user.name, 0)
             if now - last < 15: return
 
