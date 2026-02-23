@@ -50,6 +50,7 @@ class Bot:
                     self.chat.stop()
                 if hasattr(self, 'twitch'):
                     await self.twitch.close()
+                await client.close()
             await asyncio.sleep(15)
 
     async def register_events(self):

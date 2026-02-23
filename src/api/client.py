@@ -14,6 +14,9 @@ class APIClient:
         
         self.client = httpx.AsyncClient(timeout=10.0, http2=True)
     
+    async def close(self):
+        await self.client.aclose()
+    
     async def load_data(self, retries=3, delay=5):
         for attempt in range(retries):
             try:
