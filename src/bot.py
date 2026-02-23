@@ -21,9 +21,16 @@ class Bot:
         self.dir = os.path.dirname(__file__)
         self.path = os.path.join(self.dir, "commands")
         self.groups = load_groups(self.path, "src.commands", client)
+        
+        self._stop_event: asyncio.Event | None = None
+    
+    def stop(self):
+        if self._stop_event:
+            self._stop_event.set()
     
     async def run(self):
         while True:
+            self._stop_event = asyncio.Event()
             try:
                 logger.info("init")
                 await client.load_data()
@@ -39,13 +46,14 @@ class Bot:
                 
                 self.chat.start()
                 
-                while True:
-                    await asyncio.sleep(60)
+                await self._stop_event.wait()
                 
             except Exception as e:
                 logger.critical(e)
                 logger.info("restart")
             finally:
+                if self._stop_event:
+                    self._stop_event.set()
                 if hasattr(self, 'chat'):
                     self.chat.stop()
                 if hasattr(self, 'twitch'):
