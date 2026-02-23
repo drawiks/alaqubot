@@ -30,7 +30,7 @@ class APIClient:
                 logger.warning(f"attempt {attempt+1}/{retries} failed: {e}")
                 if attempt < retries - 1:
                     await asyncio.sleep(delay)
-        logger.error("Не удалось загрузить данные после нескольких попыток")
+        logger.error("Failed to load data after retries")
     
     async def _async_data(self, endpoint: str):
         response = await self.client.get(f"{self.BASE_URL}/data/{endpoint}", timeout=5)
@@ -64,7 +64,7 @@ class APIClient:
                 logger.error(f"API error {response.status_code} for {endpoint}")
                 return "Ошибка на стороне API"
         except Exception as e:
-            logger.error(f"Сбой связи с API: {e}")
+            logger.error(f"API connection failed: {e}")
             return "Сервер API временно недоступен"
         
     async def post_request(self, endpoint: str, data: dict) -> Any:
@@ -81,7 +81,7 @@ class APIClient:
                 logger.error(f"API error {response.status_code} for {endpoint}")
                 return "Ошибка ИИ на стороне сервера"
         except Exception as e:
-            logger.error(f"Сбой связи с API (POST): {e}")
+            logger.error(f"API connection failed (POST): {e}")
             return "Мозг бота сейчас не в сети"
         
 client = APIClient()

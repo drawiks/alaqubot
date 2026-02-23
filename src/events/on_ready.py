@@ -8,5 +8,5 @@ class ReadyEvent:
         self.channel = channel
 
     async def on_ready(self, ready_event: EventData):
-        logger.info('✅ Бот готов к работе, подключение к каналу')
+        logger.info('Bot ready, connecting to channel')
         await ready_event.chat.join_room(self.channel)
