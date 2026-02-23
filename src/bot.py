@@ -12,6 +12,8 @@ from .api import client
 import asyncio
 import os
 class Bot:
+    _shutdown = False
+    
     def __init__(self):
         self.USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT]
         
@@ -23,10 +25,9 @@ class Bot:
         self.groups = load_groups(self.path, "src.commands", client)
         
         self._stop_event: asyncio.Event | None = None
-        self._shutdown = False
     
     def stop(self, shutdown: bool = False):
-        self._shutdown = shutdown
+        Bot._shutdown = shutdown
         if self._stop_event:
             self._stop_event.set()
     
@@ -50,6 +51,9 @@ class Bot:
                 
                 await self._stop_event.wait()
                 
+            except asyncio.CancelledError:
+                Bot._shutdown = True
+                raise
             except Exception as e:
                 logger.critical(e)
                 logger.info("restart")
@@ -62,7 +66,7 @@ class Bot:
                     await self.twitch.close()
                 await client.close()
             
-            if self._shutdown:
+            if Bot._shutdown:
                 logger.info("shutdown complete")
                 break
             
