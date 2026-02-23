@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+store.md
+readme.md
+LICENSE
+alaqu.jpg

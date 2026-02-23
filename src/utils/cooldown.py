@@ -2,11 +2,12 @@
 from functools import wraps
 import time
 
-from .cache import CacheManager
+from .cache import cache
 from .logger import logger
 
+_cooldown_storage = {}
+
 def cooldown(seconds=30, per_user=True):
-    cooldowns = CacheManager(maxsize=1000, ttl=seconds)
 
     def decorator(func):
         @wraps(func)
@@ -18,14 +19,20 @@ def cooldown(seconds=30, per_user=True):
                 return await func(self, cmd, *args, **kwargs)
             
             key = f"{cmd.user.name}:{func.__name__}" if per_user else func.__name__
-            last = cooldowns.get_cache(key)
+            now = time.time()
+            last = _cooldown_storage.get(key)
             
-            if last is not None:
-                wait = round(seconds - (time.time() - last), 1)
+            if last is not None and now - last < seconds:
+                wait = round(seconds - (now - last), 1)
                 await cmd.reply(f"Подожди {wait} сек!")
                 return
             
-            cooldowns.set_cache(key, time.time())
+            _cooldown_storage[key] = now
+            
+            expired = [k for k, v in _cooldown_storage.items() if now - v >= seconds]
+            for k in expired:
+                del _cooldown_storage[k]
+            
             return await func(self, cmd, *args, **kwargs)
         return wrapper
     return decorator
