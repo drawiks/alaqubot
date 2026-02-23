@@ -23,8 +23,10 @@ class Bot:
         self.groups = load_groups(self.path, "src.commands", client)
         
         self._stop_event: asyncio.Event | None = None
+        self._shutdown = False
     
-    def stop(self):
+    def stop(self, shutdown: bool = False):
+        self._shutdown = shutdown
         if self._stop_event:
             self._stop_event.set()
     
@@ -59,6 +61,11 @@ class Bot:
                 if hasattr(self, 'twitch'):
                     await self.twitch.close()
                 await client.close()
+            
+            if self._shutdown:
+                logger.info("shutdown complete")
+                break
+            
             await asyncio.sleep(15)
 
     async def register_events(self):

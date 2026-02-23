@@ -13,7 +13,7 @@ async def main():
     
     loop = asyncio.get_running_loop()
     for sig in (signal.SIGINT, signal.SIGTERM):
-        loop.add_signal_handler(sig, bot.stop)
+        loop.add_signal_handler(sig, lambda: bot.stop(shutdown=True))
     
     await asyncio.gather(bot.run(), update_data())
 
