@@ -7,10 +7,13 @@ from .config import CLIENT_ID, CLIENT_SECRET, CHANNELS, TOKEN, REFRESH_TOKEN
 
 from .events import MessageEvent, ReadyEvent
 from .utils import logger, get_methods, load_groups
+from .utils.auth import AuthManager
 from .api import client
         
 import asyncio
 import os
+from pathlib import Path
+
 class Bot:
     _shutdown = False
     
@@ -25,6 +28,10 @@ class Bot:
         self.groups = load_groups(self.path, "src.commands", client)
         
         self._stop_event: asyncio.Event | None = None
+        
+        self.auth = AuthManager()
+        self.auth._env_path = Path(__file__).parent / ".env"
+        self.auth.load_tokens(TOKEN, REFRESH_TOKEN)
     
     def stop(self, shutdown: bool = False):
         Bot._shutdown = shutdown
@@ -39,7 +46,14 @@ class Bot:
                 await client.load_data()
                 
                 self.twitch = Twitch(CLIENT_ID, CLIENT_SECRET)
-                await self.twitch.set_user_authentication(TOKEN, self.USER_SCOPE, REFRESH_TOKEN)
+                try:
+                    await self.twitch.set_user_authentication(self.auth._token, self.USER_SCOPE, self.auth._refresh_token)
+                except Exception as auth_err:
+                    logger.warning(f"auth error: {auth_err}, attempting token refresh")
+                    if await self.auth.refresh(CLIENT_ID, CLIENT_SECRET):
+                        await self.twitch.set_user_authentication(self.auth._token, self.USER_SCOPE, self.auth._refresh_token)
+                    else:
+                        raise
                         
                 self.chat = await Chat(self.twitch)
                 self.chat.no_message_reset_time = 5
