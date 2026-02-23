@@ -1,6 +1,7 @@
 from src.bot import Bot
 from src.api import client
 import asyncio
+import signal
 
 async def update_data():
     while True:
@@ -9,6 +10,11 @@ async def update_data():
 
 async def main():
     bot = Bot()
+    
+    loop = asyncio.get_running_loop()
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        loop.add_signal_handler(sig, bot.stop)
+    
     await asyncio.gather(bot.run(), update_data())
 
 if __name__ == "__main__":
