@@ -41,7 +41,7 @@ class AuthManager:
                     data = response.json()
                     self._token = data["access_token"]
                     self._refresh_token = data.get("refresh_token", self._refresh_token)
-                    self._save_tokens_to_env()
+                    self._save_tokens()
                     logger.success("token refreshed")
                     return True
                 else:
@@ -51,7 +51,7 @@ class AuthManager:
             logger.error(f"token refresh error: {e}")
             return False
     
-    def _save_tokens_to_env(self):
+    def _save_tokens(self):
         try:
             if self._env_path.exists():
                 lines = self._env_path.read_text().splitlines()
