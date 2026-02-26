@@ -174,7 +174,7 @@ environs==14.3.0
 cachetools==6.2.4
 
 # --- logs ---
-dlogger-drawiks==0.2.2
+dlogger-drawiks==0.3.1
 
 # --- web ---
 httpx==0.28.1
@@ -184,5 +184,5 @@ deep-translator==1.11.4
 
 # --- cli ---
 pyfiglet==1.0.4
-dcolor-drawiks==0.1.0
+dcolor-drawiks==0.2.0
 ```
