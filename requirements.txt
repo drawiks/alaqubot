@@ -18,4 +18,4 @@ deep-translator==1.11.4
 
 # --- cli ---
 pyfiglet==1.0.4
-dcolor-drawiks==0.1.0
+dcolor-drawiks==0.2.0
