@@ -1,188 +1,249 @@
 <div align="center">
-    <h1>🤡 alaqubot</h1>
-    <img height="20" alt="Python 3.11+" src="https://img.shields.io/badge/python-3.11+-blue">
-    <img height="20" alt="License Apache 2.0" src="https://img.shields.io/badge/license-MIT-green">
-    <img height="20" alt="Status" src="https://img.shields.io/badge/status-stable-red">
-    <p><strong>alaqubot</strong> — это twitch-бот для стримера alaqu1337</p>
+    <h1>🤡 AlaquBot</h1>
+    <img height="20" alt="Python 3.14+" src="https://img.shields.io/badge/python-3.14+-blue">
+    <img height="20" alt="License MIT" src="https://img.shields.io/badge/license-MIT-green">
+    <img height="20" alt="Docker" src="https://img.shields.io/badge/docker-ready-blue">
+    <p>Twitch бот с плагинной архитектурой для стримера <strong>alaqu1337</strong></p>
     <blockquote>(─‿‿─)</blockquote>
 </div>
 
 ---
 
-```
- ______   ___                             ____            __
-/\  _  \ /\_ \                           /\  _`\         /\ \__
-\ \ \L\ \\//\ \      __       __   __  __\ \ \L\ \    ___\ \ ,_\
- \ \  __ \ \ \ \   /'__`\   /'__`\/\ \/\ \\ \  _ <'  / __`\ \ \/
-  \ \ \/\ \ \_\ \_/\ \L\.\_/\ \L\ \ \ \_\ \\ \ \L\ \/\ \L\ \ \ \_
-   \ \_\ \_\/\____\ \__/.\_\ \___, \ \____/ \ \____/\ \____/\ \__\
-    \/_/\/_/\/____/\/__/\/_/\/___/\ \/___/   \/___/  \/___/  \/__/
-                                 \ \_\
-                                  \/_/
+## 🚀 Quick Start
 
-```
-
-## **📂 структура проекта**
+### Клонирование и запуск
 
 ```bash
+# Клонировать репозиторий
+git clone https://github.com/drawiks/alaqubot.git
+cd alaqubot
+
+# Скопировать пример .env
+cp .env.example .env
+
+# Отредактировать .env
+nano .env
+
+# Запустить
+python main.py
+```
+
+### Docker
+
+```bash
+# Сборка и запуск
+docker-compose up -d
+
+# Просмотр логов
+docker-compose logs -f
+
+# Остановка
+docker-compose down
+```
+
+---
+
+## ✨ Возможности
+
+| Возможность | Описание |
+|------------|----------|
+| 🧩 Плагинная архитектура | Добавляй новые функции без изменения ядра |
+| 🔍 Авто-обнаружение | Плагины загружаются автоматически |
+| ⚙️ YAML конфигурация | Настраивай плагины через YAML файлы |
+| 🐳 Docker ready | Запусти в контейнере за минуту |
+| 🔄 Auto restart | Бот автоматически перезагружается при ошибках |
+| ⏱️ Rate limiting | Встроенная защита от спама |
+| 📝 Логирование | Ротация логов, сжатие, retention |
+
+---
+
+## 📋 Команды
+
+### Основные
+
+| Команда | Описание |
+|---------|----------|
+| `!команды` | Список всех доступных команд |
+| `!тг` | Ссылка на Telegram канал |
+| `!автор` | Авторы проекта |
+| `!гайд` | Гайд по боту |
+| `!мейн` | Основной канал |
+
+### Развлечения
+
+| Команда | Описание |
+|---------|----------|
+| `!спин` | Игра в слоты |
+| `!ролл` | Случайное число 0-100 |
+| `!зона` | Случайная зона |
+| `!шар` | Волшебный шар |
+
+### Утилиты
+
+| Команда | Описание |
+|---------|----------|
+| `!доллар` | Курс доллара |
+| `!погода <город>` | Погода в городе |
+| `!фильм` | Случайный фильм |
+| `!wl` | Winrate последних матчей |
+| `!mmr` | Текущий MMR |
+| `!setmmr` | Установить MMR (для модеров) |
+| `!setid` | Установить Dota ID (для модеров) |
+| `!uptime` | Время работы бота |
+
+---
+
+## 🏗️ Архитектура
+
+```
 alaqubot/
-│
+├── .env                      # Переменные окружения
+├── .env.example              # Пример конфигурации
 ├── src/
-│   ├── api/
-│   │   ├── __init__.py
-│   │   └── client.py
-│   ├── commands/
-│   │   ├── __init__.py
-│   │   ├── main_commands.py
-│   │   ├── fun_commands.py
-│   │   └── utility_commands.py
-│   ├── events/
-│   │   ├── __init__.py
-│   │   ├── on_message.py
-│   │   └── on_ready.py
-│   ├── utils/
-│   │   ├── __init__.py
-│   │   ├── commands.py         # --- родительский класс команд ---
-│   │   ├── cooldown.py         # --- задержка для команд ---
-│   │   ├── cache.py            # --- кеширование ---
-│   │   ├── discovery.py        # --- динамическая загрузка ---
-│   │   ├── uptime.py           # --- время работы бота ---
-│   │   ├── register_command.py # --- регистрация команд ---
-│   │   └── logger.py           # --- логирование ---
-│   │
-│   ├── bot.py
-│   ├── config.py
-│   └── heroes.py
-│
-├── alaqubot.py # --- entrypoint ---
-│
-├── alaqu.jpg
-│
-├── requirements.txt
-├── .gitignore
-├── README.md
-└── LICENSE
+│   ├── bot.py              # Ядро бота
+│   ├── config.py           # Загрузка конфигов
+│   ├── core/
+│   │   └── plugin.py      # Базовый класс Plugin
+│   ├── plugins/            # Плагины (включая конфиги)
+│   │   ├── fun/
+│   │   │   ├── __init__.py
+│   │   │   ├── plugin.py
+│   │   │   └── config.yaml
+│   │   ├── main/
+│   │   └── utility/
+│   ├── events/            # Обработчики событий
+│   ├── adapters/          # API клиенты
+│   └── utils/             # Утилиты
+├── main.py                # Точка входа
+├── Dockerfile
+├── docker-compose.yml
+└── requirements.txt
 ```
 
-## **🌐 команды**
+### Как работает система плагинов
 
-```
---- main ---
-- !команды
-- !тг
-- !гайд
-- !мейн
-- !автор
-
---- fun ---
-- !спин
-- !ролл
-- !шар
-- !зона
-
---- utility ---
-- !доллар
-- !погода
-- !фильм
-- !wl
-- !mmr
-- !setmmr
-- !setid
-```
+1. Бот сканирует папку `src/plugins/`
+2. Для каждой папки загружается `plugin.py` с классом `XxxPlugin`
+3. Конфигурация читается из `config/plugins/xxx/config.yaml`
+4. Команды регистрируются автоматически
+5. При перезагрузке плагины выгружаются и загружаются заново
 
 ---
 
-[src/bot.py](/src/bot.py)
-``` python
-from twitchAPI.twitch import Twitch
-from twitchAPI.type import AuthScope, ChatEvent
-from twitchAPI.chat import Chat
+## 🐳 Docker
 
-from .config import CLIENT_ID, CLIENT_SECRET, CHANNELS, TOKEN, REFRESH_TOKEN
+### Сборка
 
-from .events import MessageEvent, ReadyEvent
-from .utils import logger, get_methods, load_groups
-from .api import client
-        
-import asyncio
-import os
-class Bot:
-    def __init__(self):
-        self.USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT]
-        
-        self.message_event = MessageEvent(client)
-        self.ready_event = ReadyEvent(CHANNELS)
-        
-        self.dir = os.path.dirname(__file__)
-        self.path = os.path.join(self.dir, "commands")
-        self.groups = load_groups(self.path, "src.commands", client)
-    
-    async def run(self):
-        while True:
-            try:
-                logger.info("init")
-                await client.load_data()
-                
-                self.twitch = Twitch(CLIENT_ID, CLIENT_SECRET)
-                await self.twitch.set_user_authentication(TOKEN, self.USER_SCOPE, REFRESH_TOKEN)
-                        
-                self.chat = await Chat(self.twitch)
-                self.chat.no_message_reset_time = 5
-                    
-                await self.register_events()
-                await self.register_commands()
-                
-                self.chat.start()
-                
-                while True:
-                    await asyncio.sleep(60)
-                
-            except Exception as e:
-                logger.critical(e)
-                logger.info("restart")
-            finally:
-                if hasattr(self, 'chat'):
-                    self.chat.stop()
-                if hasattr(self, 'twitch'):
-                    await self.twitch.close()
-            await asyncio.sleep(15)
-
-    async def register_events(self):
-        self.chat.register_event(ChatEvent.MESSAGE, self.message_event.on_message)
-        self.chat.register_event(ChatEvent.READY, self.ready_event.on_ready)
-    
-    async def register_commands(self):
-        for group in self.groups:
-            commands = get_methods(group)
-            logger.debug(f"{group} registered")
-            for cmd in commands:
-                self.chat.register_command(cmd["name"], cmd["func"])
-```
-
----
-
-## **🧩 зависимости**
-[requirements.txt](/requirements.txt)
 ```bash
-# --- twitch ---
-twitchAPI==4.5.0
-
-# --- config ---
-environs==14.3.0
-
-# --- data ---
-cachetools==6.2.4
-
-# --- logs ---
-dlogger-drawiks==0.3.1
-
-# --- web ---
-httpx==0.28.1
-
-# --- api ---
-deep-translator==1.11.4
-
-# --- cli ---
-pyfiglet==1.0.4
-dcolor-drawiks==0.2.0
+docker-compose build
 ```
+
+### Запуск в фоновом режиме
+
+```bash
+docker-compose up -d
+```
+
+### Просмотр логов
+
+```bash
+docker-compose logs -f bot
+```
+
+### Пересборка
+
+```bash
+docker-compose up --build -d
+```
+
+### Остановка
+
+```bash
+docker-compose down
+```
+
+---
+
+## ⚙️ Конфигурация
+
+### .env переменные
+
+| Переменная | Описание | Пример |
+|-----------|----------|--------|
+| `CLIENT_ID` | Twitch Client ID | `abc123...` |
+| `CLIENT_SECRET` | Twitch Client Secret | `secret...` |
+| `TOKEN` | Twitch Access Token | `oauth:...` |
+| `REFRESH_TOKEN` | Twitch Refresh Token | `oauth:...` |
+| `CHANNELS` | Каналы через запятую | `alaqu1337,channel2` |
+| `LOG_PATH` | Путь к логам | `logs/bot.log` |
+| `LOG_LEVEL` | Уровень логирования | `INFO` |
+| `LOG_ROTATION` | Ротация логов | `10MB` |
+| `LOG_RETENTION` | Хранение логов | `7 days` |
+| `RATE_LIMIT_GLOBAL` | Глобальный лимит | `30` |
+| `RATE_LIMIT_USER` | Лимит на пользователя | `15` |
+
+### Конфиги плагинов
+
+Каждый плагин имеет свой YAML конфиг в `config/plugins/<plugin_name>/config.yaml`:
+
+```yaml
+enabled: true
+
+commands:
+  команда:
+    cooldown: 10       # Кулдаун в секундах
+    enabled: true
+    requires_permission: false
+
+settings:
+  # Специфичные настройки плагина
+  zones:
+    - "зона1"
+    - "зона2"
+```
+
+---
+
+## 🛠️ Разработка плагинов
+
+Подробная документация доступна в [Wiki](https://github.com/drawiks/alaqubot/wiki):
+
+- [Быстрый старт](https://github.com/drawiks/alaqubot/wiki/Быстрый-старт)
+- [Структура плагина](https://github.com/drawiks/alaqubot/wiki/Структура-плагина)
+- [Конфигурация](https://github.com/drawiks/alaqubot/wiki/Конфигурация)
+- [Plugin API](https://github.com/drawiks/alaqubot/wiki/Plugin-API)
+- [Примеры](https://github.com/drawiks/alaqubot/wiki/Примеры)
+- [Распространение](https://github.com/drawiks/alaqubot/wiki/Распространение)
+
+---
+
+## 📦 Зависимости
+
+```
+twitchAPI==4.5.0     # Twitch API
+environs==14.6.0     # Конфигурация
+pyyaml==6.0.2        # YAML парсинг
+httpx==0.28.1        # HTTP клиент
+dlogger-drawiks==0.3.8  # Логирование
+pyfiglet==1.0.4      # ASCII арт
+dcolor-drawiks==0.2.0 # Цветной вывод
+```
+
+---
+
+## 📄 License
+
+MIT License - см. [LICENSE](LICENSE)
+
+---
+
+## 👤 Авторы
+
+- [drawiks](https://github.com/drawiks) - Основная разработка
+
+---
+
+<div align="center">
+    <p>Сделано с ❤️ для Twitch стримеров</p>
+    <p>(─‿‿─)</p>
+</div>
