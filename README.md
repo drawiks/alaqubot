@@ -1,7 +1,7 @@
 <div align="center">
     <h1>🤡 alaqubot</h1>
     <img height="20" alt="Python 3.14+" src="https://img.shields.io/badge/python-3.14+-blue">
-    <img height="20" alt="License MIT" src="https://img.shields.io/badge/license-MIT-green">
+    <img height="20" alt="License GPL v3" src="https://img.shields.io/badge/license-GPLv3-green">
     <img height="20" alt="Docker" src="https://img.shields.io/badge/docker-ready-blue">
     <p>Twitch бот для стримера <strong>alaqu1337</strong></p>
     <blockquote>(─‿‿─)</blockquote>
@@ -233,7 +233,7 @@ dcolor-drawiks==0.2.0   # Цветной вывод
 
 ## 📄 License
 
-MIT License - см. [LICENSE](LICENSE)
+GNU General Public License v3 - см. [LICENSE](LICENSE)
 
 ---
 
