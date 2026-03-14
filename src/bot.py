@@ -83,6 +83,8 @@ class Bot:
             handler = cmd["handler"]
             cmd_name = cmd["name"]
 
+            handler._command_config = config
+
             if config.get("cooldown", 0) > 0:
                 handler = self._wrap_with_cooldown(handler, config["cooldown"])
 
@@ -140,13 +142,10 @@ class Bot:
 
     def _register_events(self, twitch: TwitchClient) -> None:
         twitch.register_event(
-            ChatEvent.MESSAGE, 
-            partial(message_handler, client=self._api_client)  # type: ignore[arg-type]
+            ChatEvent.MESSAGE,
+            partial(message_handler, client=self._api_client),  # type: ignore[arg-type]
         )
-        twitch.register_event(
-            ChatEvent.READY, 
-            partial(on_ready, channels=CHANNELS)
-        )
+        twitch.register_event(ChatEvent.READY, partial(on_ready, channels=CHANNELS))
 
     def _initialize_services(self) -> None:
         self._auth_service = self._create_auth_service()

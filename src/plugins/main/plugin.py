@@ -46,16 +46,10 @@ class MainPlugin(Plugin):
     async def list_commands(self, cmd):
         names = []
         for group in self._groups:
-            for name in dir(group):
-                if name.startswith("_"):
-                    continue
-                attr = getattr(group, name, None)
-                if callable(attr):
-                    config = getattr(attr, "_command_config", None)
-                    if config and config.get("enabled", True):
-                        cmd_name = config.get("name", name)
-                        if config.get("public", True):
-                            names.append(cmd_name)
+            for cmd_dict in group.get_commands():
+                config = cmd_dict.get("config", {})
+                if config and config.get("enabled", True) and config.get("public", True):
+                    names.append(cmd_dict["name"])
 
         commands = sorted(list(set(names)))
         reply = "Команды: !" + ", !".join(commands)
