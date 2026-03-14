@@ -83,8 +83,6 @@ class Bot:
             handler = cmd["handler"]
             cmd_name = cmd["name"]
 
-            handler._command_config = config
-
             if config.get("cooldown", 0) > 0:
                 handler = self._wrap_with_cooldown(handler, config["cooldown"])
 

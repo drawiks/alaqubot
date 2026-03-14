@@ -48,7 +48,11 @@ class MainPlugin(Plugin):
         for group in self._groups:
             for cmd_dict in group.get_commands():
                 config = cmd_dict.get("config", {})
-                if config and config.get("enabled", True) and config.get("public", True):
+                if (
+                    config
+                    and config.get("enabled", True)
+                    and config.get("public", True)
+                ):
                     names.append(cmd_dict["name"])
 
         commands = sorted(list(set(names)))
