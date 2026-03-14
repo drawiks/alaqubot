@@ -68,7 +68,7 @@ class Bot:
                 logger.info(f"Plugin {name} disabled in config")
                 return None
 
-            return plugin_class(self._api_client, config, self._api_client.users)  # type: ignore[union-attr]
+            return plugin_class(self._api_client, config, self._api_client.users, self._twitch_client)  # type: ignore[union-attr]
         except Exception as e:
             logger.error(f"Failed to load plugin {name}: {e}")
             return None

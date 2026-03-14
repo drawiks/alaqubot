@@ -28,3 +28,7 @@ commands:
     cooldown: 0
     enabled: true
     requires_permission: true
+  email:
+    cooldown: 0
+    enabled: true
+    requires_permission: true

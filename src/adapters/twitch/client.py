@@ -1,6 +1,7 @@
 from twitchAPI.twitch import Twitch
 from twitchAPI.type import AuthScope, ChatEvent
 from twitchAPI.chat import Chat
+from twitchAPI.helper import first
 from typing import Callable, Any, Optional
 import asyncio
 
@@ -93,3 +94,11 @@ class TwitchClient:
     def clear_handlers(self) -> None:
         self._event_handlers.clear()
         self._command_handlers.clear()
+
+    async def get_bot_email(self) -> Optional[str]:
+        if not self._twitch:
+            return None
+        user = await first(self._twitch.get_users())
+        if user and hasattr(user, 'email') and user.email:
+            return user.email
+        return None

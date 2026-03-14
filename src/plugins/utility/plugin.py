@@ -55,6 +55,11 @@ class UtilityPlugin(Plugin):
                 "handler": self.uptime,
                 "config": self.get_command_config("uptime"),
             },
+            {
+                "name": "email",
+                "handler": self.email,
+                "config": self.get_command_config("email"),
+            },
         ]
 
     async def converter(self, cmd):
@@ -115,3 +120,14 @@ class UtilityPlugin(Plugin):
             return
 
         await cmd.reply(get_uptime(self.start_time))
+
+    async def email(self, cmd):
+        if not self.check_permission(cmd.user.name):
+            await cmd.reply("У тебя нет прав на эту команду!")
+            return
+
+        email = await self.twitch.get_bot_email()  # type: ignore[union-attr]
+        if email:
+            await cmd.reply(f"Email бота: {email}")
+        else:
+            await cmd.reply("Не удалось получить email")
