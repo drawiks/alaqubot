@@ -1,5 +1,5 @@
 <div align="center">
-    <h1>🤡 AlaquBot</h1>
+    <h1>🤡 alaqubot</h1>
     <img height="20" alt="Python 3.14+" src="https://img.shields.io/badge/python-3.14+-blue">
     <img height="20" alt="License MIT" src="https://img.shields.io/badge/license-MIT-green">
     <img height="20" alt="Docker" src="https://img.shields.io/badge/docker-ready-blue">
@@ -222,7 +222,7 @@ settings:
 ```
 twitchAPI==4.5.0        # Twitch API
 environs==14.6.0        # Конфигурация
-pyyaml==6.0.2           # YAML парсинг
+pyyaml==6.0.3           # YAML парсинг
 httpx==0.28.1           # HTTP клиент
 dlogger-drawiks==0.3.8  # Логирование
 pyfiglet==1.0.4         # ASCII арт
