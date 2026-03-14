@@ -3,7 +3,7 @@ import importlib
 import os
 from pathlib import Path
 from typing import Optional
-from functools import wraps
+from functools import wraps, partial
 
 from twitchAPI.type import AuthScope, ChatEvent, TwitchBackendException
 
@@ -23,7 +23,7 @@ from src.services.cooldown import CooldownService
 
 from src.core.plugin import Plugin
 
-from src.handlers.events import MessageEvent, ReadyEvent
+from src.handlers.events import on_message as message_handler, on_ready, message_cleanup
 
 from src.utils.logger import logger
 
@@ -139,11 +139,14 @@ class Bot:
         )
 
     def _register_events(self, twitch: TwitchClient) -> None:
-        message_event = MessageEvent(self._api_client)  # type: ignore[arg-type]
-        ready_event = ReadyEvent(CHANNELS)
-
-        twitch.register_event(ChatEvent.MESSAGE, message_event.on_message)
-        twitch.register_event(ChatEvent.READY, ready_event.on_ready)
+        twitch.register_event(
+            ChatEvent.MESSAGE, 
+            partial(message_handler, client=self._api_client)  # type: ignore[arg-type]
+        )
+        twitch.register_event(
+            ChatEvent.READY, 
+            partial(on_ready, channels=CHANNELS)
+        )
 
     def _initialize_services(self) -> None:
         self._auth_service = self._create_auth_service()

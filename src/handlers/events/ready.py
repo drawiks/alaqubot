@@ -1,13 +1,9 @@
-from typing import Any
+from twitchAPI.chat import EventData
 from src.utils.logger import logger
 
 
-class ReadyEvent:
-    def __init__(self, channels: list[str]) -> None:
-        self._channels = channels
-
-    async def on_ready(self, bot: Any, chatbot: Any) -> None:
-        logger.info(f"bot ready")
-        for channel in self._channels:
-            await chatbot.join_room(channel)
-            logger.info(f"joined {channel}")
+async def on_ready(event: EventData, channels: list[str]) -> None:
+    logger.info("bot ready")
+    for channel in channels:
+        await event.chat.join_room(channel)
+        logger.info(f"joined {channel}")

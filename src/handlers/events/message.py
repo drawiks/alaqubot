@@ -8,56 +8,60 @@ if TYPE_CHECKING:
     from src.adapters.api.client import APIClient
 
 
-class MessageEvent:
-    GLOBAL_RATE_LIMIT = 30
-    USER_COOLDOWN = 15
+GLOBAL_RATE_LIMIT = 30
+USER_COOLDOWN = 15
 
-    def __init__(self, api_client: Optional["APIClient"]) -> None:
-        self._client = api_client
-        self._user_cooldowns: dict[str, float] = {}
-        self._global_requests: list[float] = []
+_user_cooldowns: dict[str, float] = {}
+_global_requests: list[float] = []
 
-    def _check_global_limit(self) -> bool:
-        now = time.time()
-        self._global_requests = [t for t in self._global_requests if now - t < 60]
 
-        if len(self._global_requests) >= self.GLOBAL_RATE_LIMIT:
-            return False
+def _check_global_limit() -> bool:
+    global _global_requests
+    now = time.time()
+    _global_requests = [t for t in _global_requests if now - t < 60]
 
-        self._global_requests.append(now)
-        return True
+    if len(_global_requests) >= GLOBAL_RATE_LIMIT:
+        return False
 
-    async def on_message(self, msg: ChatMessage):
-        logger.trace(
-            f"|room - {msg.room.name if msg.room else ''}| {msg.user.name}: {msg.text}"
-        )
+    _global_requests.append(now)
+    return True
 
-        now = time.time()
-        expired = [
-            u for u, t in self._user_cooldowns.items() if now - t >= self.USER_COOLDOWN
-        ]
-        for u in expired:
-            del self._user_cooldowns[u]
 
-        if "@alaqubot" in msg.text.lower():
-            last = self._user_cooldowns.get(msg.user.name, 0)
-            if now - last < self.USER_COOLDOWN:
-                return
+async def on_message(msg: ChatMessage, client: Optional["APIClient"]) -> None:
+    global _user_cooldowns
+    
+    logger.trace(
+        f"|room - {msg.room.name if msg.room else ''}| {msg.user.name}: {msg.text}"
+    )
 
-            if not self._check_global_limit():
-                await msg.reply("Слишком много запросов, попробуй позже")
-                return
+    now = time.time()
+    expired = [
+        u for u, t in _user_cooldowns.items() if now - t >= USER_COOLDOWN
+    ]
+    for u in expired:
+        del _user_cooldowns[u]
 
-            self._user_cooldowns[msg.user.name] = now
+    if "@alaqubot" in msg.text.lower():
+        last = _user_cooldowns.get(msg.user.name, 0)
+        if now - last < USER_COOLDOWN:
+            return
 
-            text = msg.text.lower().replace("@alaqubot", "").strip()
-            if not text:
-                return
+        if not _check_global_limit():
+            await msg.reply("Слишком много запросов, попробуй позже")
+            return
 
-            response = await self._client.post_request("groq", {"text": text})  # type: ignore[union-attr]
-            if msg.room:
-                await msg.chat.send_message(msg.room.name, f"@{msg.user.name} {response}")  # type: ignore[union-attr]
+        _user_cooldowns[msg.user.name] = now
 
-    def cleanup(self) -> None:
-        self._user_cooldowns.clear()
-        self._global_requests.clear()
+        text = msg.text.lower().replace("@alaqubot", "").strip()
+        if not text:
+            return
+
+        response = await client.post_request("groq", {"text": text})  # type: ignore[union-attr]
+        if msg.room:
+            await msg.chat.send_message(msg.room.name, f"@{msg.user.name} {response}")  # type: ignore[union-attr]
+
+
+def cleanup() -> None:
+    global _user_cooldowns, _global_requests
+    _user_cooldowns.clear()
+    _global_requests.clear()

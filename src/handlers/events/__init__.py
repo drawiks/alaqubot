@@ -1,7 +1,8 @@
-from .message import MessageEvent
-from .ready import ReadyEvent
+from .message import on_message, cleanup as message_cleanup
+from .ready import on_ready
 
 __all__ = [
-    "MessageEvent",
-    "ReadyEvent",
+    "on_message",
+    "on_ready",
+    "message_cleanup",
 ]
