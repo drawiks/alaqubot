@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.env
+.idea/
+.vscode/
+.git/
+*.log
+logs/
+.DS_Store
+*.md
+!README.md

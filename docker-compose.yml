@@ -1,0 +1,12 @@
+services:
+  bot:
+    build: .
+    container_name: alaqubot
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - bot_logs:/app/logs
+    network_mode: host
+
+volumes:
+  bot_logs:
