@@ -1,0 +1,22 @@
+{
+  "include": ["src"],
+  "exclude": ["**/__pycache__", "**/.venv", "**/node_modules"],
+  "pythonVersion": "3.14",
+  "typeCheckingMode": "strict",
+  "strictListInference": true,
+  "strictDictionaryInference": true,
+  "strictParameterNoneValue": true,
+  "reportMissingTypeStubs": false,
+  "reportUnknownMemberType": false,
+  "reportUnknownVariableType": false,
+  "reportUnknownArgumentType": false,
+  "pythonPlatform": "Linux",
+  "reportMissingImports": false,
+  "reportMissingTypeStubs": false,
+  "reportUnusedImport": false,
+  "reportAttributeAccessIssue": false,
+  "reportUnknownParameterType": false,
+  "reportMissingTypeArgument": false,
+  "reportMissingParameterType": false,
+  "reportOptionalMemberAccess": false
+}
