@@ -52,6 +52,7 @@ class MainPlugin(Plugin):
                     config
                     and config.get("enabled", True)
                     and config.get("public", True)
+                    and not config.get("requires_permission", False)
                 ):
                     names.append(cmd_dict["name"])
 
