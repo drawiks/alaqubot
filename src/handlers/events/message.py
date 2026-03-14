@@ -29,15 +29,13 @@ def _check_global_limit() -> bool:
 
 async def on_message(msg: ChatMessage, client: Optional["APIClient"]) -> None:
     global _user_cooldowns
-    
+
     logger.trace(
         f"|room - {msg.room.name if msg.room else ''}| {msg.user.name}: {msg.text}"
     )
 
     now = time.time()
-    expired = [
-        u for u, t in _user_cooldowns.items() if now - t >= USER_COOLDOWN
-    ]
+    expired = [u for u, t in _user_cooldowns.items() if now - t >= USER_COOLDOWN]
     for u in expired:
         del _user_cooldowns[u]
 
