@@ -122,9 +122,9 @@ alaqubot/
 
 ### Как работает система плагинов
 
-1. Бот сканирует папку `src/plugins/`
-2. Для каждой папки загружается `plugin.py` с классом `XxxPlugin`
-3. Конфигурация читается из `config/plugins/xxx/config.yaml`
+1. Бот сканирует директорию `src/plugins/`
+2. Для каждой директории загружается `plugin.py` с классом `XxxPlugin`
+3. Конфигурация читается из `src/plugins/xxx/config.yaml`
 4. Команды регистрируются автоматически
 5. При перезагрузке плагины выгружаются и загружаются заново
 
@@ -184,7 +184,7 @@ docker-compose down
 
 ### Конфиги плагинов
 
-Каждый плагин имеет свой YAML конфиг в `config/plugins/<plugin_name>/config.yaml`:
+Каждый плагин имеет свой YAML конфиг в `src/plugins/<plugin_name>/config.yaml`:
 
 ```yaml
 enabled: true
@@ -197,9 +197,9 @@ commands:
 
 settings:
   # Специфичные настройки плагина
-  zones:
-    - "зона1"
-    - "зона2"
+  words:
+    - "слово1"
+    - "слово2"
 ```
 
 ---
@@ -220,13 +220,13 @@ settings:
 ## 📦 Зависимости
 
 ```
-twitchAPI==4.5.0     # Twitch API
-environs==14.6.0     # Конфигурация
-pyyaml==6.0.2        # YAML парсинг
-httpx==0.28.1        # HTTP клиент
+twitchAPI==4.5.0        # Twitch API
+environs==14.6.0        # Конфигурация
+pyyaml==6.0.2           # YAML парсинг
+httpx==0.28.1           # HTTP клиент
 dlogger-drawiks==0.3.8  # Логирование
-pyfiglet==1.0.4      # ASCII арт
-dcolor-drawiks==0.2.0 # Цветной вывод
+pyfiglet==1.0.4         # ASCII арт
+dcolor-drawiks==0.2.0   # Цветной вывод
 ```
 
 ---
@@ -244,6 +244,6 @@ MIT License - см. [LICENSE](LICENSE)
 ---
 
 <div align="center">
-    <p>Сделано с ❤️ для Twitch стримеров</p>
+    <p>Сделано с ❤️ для alaqu1337</p>
     <p>(─‿‿─)</p>
 </div>
