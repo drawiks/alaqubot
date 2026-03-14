@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional
 from functools import wraps, partial
 
-from twitchAPI.type import AuthScope, ChatEvent, TwitchBackendException
+from twitchAPI.type import ChatEvent, TwitchBackendException
 
 from src.config import (
     CLIENT_ID,
@@ -17,6 +17,7 @@ from src.config import (
 )
 from src.adapters.api.client import APIClient
 from src.adapters.twitch.client import TwitchClient
+from src.adapters.twitch.settings import TWITCH_SCOPES
 
 from src.services.auth import AuthService
 from src.services.cooldown import CooldownService
@@ -135,7 +136,7 @@ class Bot:
             client_id=CLIENT_ID,
             client_secret=CLIENT_SECRET,
             auth_service=auth,
-            scope=[AuthScope.CHAT_READ, AuthScope.CHAT_EDIT],
+            scope=TWITCH_SCOPES,
         )
 
     def _register_events(self, twitch: TwitchClient) -> None:

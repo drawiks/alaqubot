@@ -7,6 +7,7 @@ import asyncio
 
 from src.utils.logger import logger
 from src.services.auth import AuthService
+from src.adapters.twitch.settings import DEFAULT_SCOPES
 
 
 class TwitchClient:
@@ -20,7 +21,7 @@ class TwitchClient:
         self._client_id = client_id
         self._client_secret = client_secret
         self._auth_service = auth_service
-        self._scope = scope or [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT, AuthScope.USER_READ_EMAIL, AuthScope.CHANNEL_BOT]
+        self._scope = scope or DEFAULT_SCOPES
 
         self._twitch: Optional[Twitch] = None
         self._chat: Optional[Chat] = None
@@ -99,6 +100,6 @@ class TwitchClient:
         if not self._twitch:
             return None
         user = await first(self._twitch.get_users())
-        if user and hasattr(user, 'email') and user.email:
+        if user and hasattr(user, "email") and user.email:
             return user.email
         return None
