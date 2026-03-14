@@ -20,4 +20,4 @@ dcolor-drawiks==0.2.0
 pre-commit==4.5.1
 
 # --- type checking ---
-pyright==1.1.390
+pyright==1.1.408
