@@ -19,7 +19,7 @@ class TwitchClient:
         self._client_id = client_id
         self._client_secret = client_secret
         self._auth_service = auth_service
-        self._scope = scope or [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT]
+        self._scope = scope or [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT, AuthScope.USER_READ_EMAIL, AuthScope.CHANNEL_BOT]
 
         self._twitch: Optional[Twitch] = None
         self._chat: Optional[Chat] = None

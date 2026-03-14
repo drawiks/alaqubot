@@ -2,7 +2,10 @@
     <h1>🤡 alaqubot</h1>
     <img height="20" alt="Python 3.14+" src="https://img.shields.io/badge/python-3.14+-blue">
     <img height="20" alt="License GPL v3" src="https://img.shields.io/badge/license-GPLv3-green">
-    <img height="20" alt="Docker" src="https://img.shields.io/badge/docker-ready-blue">
+    <img height="20" alt="Status" src="https://img.shields.io/badge/status-beta-red">
+    <a href="https://github.com/Teekeks/pyTwitchAPI">
+      <img height="20" alt="Framework" src="https://img.shields.io/badge/framework-twitchAPI-orange">
+    </a>
     <p>Twitch бот для стримера <strong>alaqu1337</strong></p>
     <blockquote>(─‿‿─)</blockquote>
 </div>
