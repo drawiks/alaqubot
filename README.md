@@ -25,7 +25,7 @@ cp .env.example .env
 nano .env
 
 # Запустить
-python main.py
+python alaqubot.py
 ```
 
 ### Docker
