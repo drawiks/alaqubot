@@ -3,7 +3,7 @@
     <img height="20" alt="Python 3.14+" src="https://img.shields.io/badge/python-3.14+-blue">
     <img height="20" alt="License MIT" src="https://img.shields.io/badge/license-MIT-green">
     <img height="20" alt="Docker" src="https://img.shields.io/badge/docker-ready-blue">
-    <p>Twitch бот с плагинной архитектурой для стримера <strong>alaqu1337</strong></p>
+    <p>Twitch бот для стримера <strong>alaqu1337</strong></p>
     <blockquote>(─‿‿─)</blockquote>
 </div>
 
