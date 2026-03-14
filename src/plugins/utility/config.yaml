@@ -1,0 +1,30 @@
+enabled: true
+
+commands:
+  доллар:
+    cooldown: 10
+    enabled: true
+  погода:
+    cooldown: 10
+    enabled: true
+  фильм:
+    cooldown: 30
+    enabled: true
+  wl:
+    cooldown: 30
+    enabled: true
+  mmr:
+    cooldown: 10
+    enabled: true
+  setmmr:
+    cooldown: 0
+    enabled: true
+    requires_permission: true
+  setid:
+    cooldown: 0
+    enabled: true
+    requires_permission: true
+  uptime:
+    cooldown: 0
+    enabled: true
+    requires_permission: true

@@ -1,0 +1,18 @@
+enabled: true
+
+commands:
+  команды:
+    cooldown: 0
+    enabled: true
+  тг:
+    cooldown: 30
+    enabled: true
+  автор:
+    cooldown: 20
+    enabled: true
+  гайд:
+    cooldown: 30
+    enabled: true
+  мейн:
+    cooldown: 30
+    enabled: true
