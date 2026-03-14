@@ -2,13 +2,11 @@
 twitchAPI==4.5.0
 
 # --- config ---
-environs==14.3.0
-
-# --- data ---
-cachetools==6.2.4
+environs==14.6.0
+pyyaml==6.0.3
 
 # --- logs ---
-dlogger-drawiks==0.3.4
+dlogger-drawiks==0.3.8
 
 # --- web ---
 httpx==0.28.1
@@ -19,3 +17,7 @@ deep-translator==1.11.4
 # --- cli ---
 pyfiglet==1.0.4
 dcolor-drawiks==0.2.0
+pre-commit==4.5.1
+
+# --- type checking ---
+pyright==1.1.390
