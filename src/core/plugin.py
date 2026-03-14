@@ -61,6 +61,9 @@ class Plugin(ABC):
     async def on_unload(self) -> None:
         pass
 
+    async def unload(self) -> None:
+        await self.on_unload()
+
     @abstractmethod
     def get_commands(self) -> list[dict]:
         pass

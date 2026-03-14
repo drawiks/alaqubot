@@ -103,7 +103,7 @@ alaqubot/
 ├── .env                        # Переменные окружения
 ├── .env.example                # Пример конфигурации
 ├── src/
-│   ├── bot.py                  # Ядро бота
+│   ├── bot.py                  # Orchestrator - управление жизненным циклом
 │   ├── config.py               # Загрузка конфигов
 │   ├── core/
 │   │   └── plugin.py           # Базовый класс Plugin
@@ -114,8 +114,14 @@ alaqubot/
 │   │   │   └── config.yaml
 │   │   ├── main/
 │   │   └── utility/
-│   ├── events/                 # Обработчики событий
+│   ├── handlers/               # Обработчики событий
+│   ├── services/                # Бизнес-логика
+│   │   ├── plugin_manager.py    # Управление плагинами
+│   │   ├── auth.py             # Аутентификация
+│   │   └── cooldown.py         # Кулдаун команд
 │   ├── adapters/               # API клиенты
+│   │   ├── api/
+│   │   └── twitch/
 │   └── utils/                  # Утилиты
 ├── alaqubot.py                  # Точка входа
 ├── Dockerfile
