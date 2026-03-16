@@ -64,7 +64,7 @@ class EventSubManager:
                 )
                 logger.info(f"EventSub subscribed to events for {channel}")
             except Exception as e:
-                logger.error(f"EventSub failed to subscribe to {channel}: {e}")
+                logger.exception(e)
 
         try:
             self._eventsub.start()
