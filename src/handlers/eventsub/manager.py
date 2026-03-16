@@ -2,6 +2,7 @@ import asyncio
 from typing import Callable
 
 from twitchAPI.eventsub.websocket import EventSubWebsocket
+from twitchAPI.helper import first
 
 from src.utils.logger import logger
 
@@ -33,12 +34,12 @@ class EventSubManager:
         self._eventsub = EventSubWebsocket(self._twitch)
 
         for channel in self._channels:
-            user = await self._twitch.get_users(logins=channel)
-            if not user or len(user) == 0:
+            user = await first(self._twitch.get_users(logins=channel))
+            if not user:
                 logger.warning(f"EventSub channel {channel} not found")
                 continue
 
-            user_id = user[0].id
+            user_id = user.id
 
             try:
                 await self._eventsub.listen_channel_follow_v2(
