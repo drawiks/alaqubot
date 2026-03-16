@@ -57,6 +57,7 @@ docker-compose down
 | 🔄 Auto restart | Бот автоматически перезагружается при ошибках |
 | ⏱️ Rate limiting | Встроенная защита от спама |
 | 📝 Логирование | Ротация логов, сжатие, retention |
+| 🔔 EventSub | Уведомления о follow, subscribe, raid, stream |
 
 ---
 
@@ -115,15 +116,17 @@ alaqubot/
 │   │   ├── main/
 │   │   └── utility/
 │   ├── handlers/               # Обработчики событий
-│   ├── services/                # Бизнес-логика
-│   │   ├── plugin_manager.py    # Управление плагинами
-│   │   ├── auth.py             # Аутентификация
-│   │   └── cooldown.py         # Кулдаун команд
-│   ├── adapters/               # API клиенты
+│   │   ├── events/            # Chat события (message, ready)
+│   │   └── eventsub/         # EventSub события (follow, subscribe, raid, stream)
+│   ├── services/              # Бизнес-логика
+│   │   ├── plugin_manager.py  # Управление плагинами
+│   │   ├── auth.py           # Аутентификация
+│   │   └── cooldown.py       # Кулдаун команд
+│   ├── adapters/             # API клиенты
 │   │   ├── api/
 │   │   └── twitch/
-│   └── utils/                  # Утилиты
-├── alaqubot.py                  # Точка входа
+│   └── utils/                # Утилиты
+├── alaqubot.py                # Точка входа
 ├── Dockerfile
 ├── docker-compose.yml
 └── requirements.txt
@@ -136,6 +139,19 @@ alaqubot/
 3. Конфигурация читается из `src/plugins/xxx/config.yaml`
 4. Команды регистрируются автоматически
 5. При перезагрузке плагины выгружаются и загружаются заново
+
+### EventSub события
+
+Бот подписывается на события Twitch через WebSocket:
+
+| Событие | Описание |
+|---------|----------|
+| `channel.follow` | Новый фолловер |
+| `channel.subscribe` | Новая подписка |
+| `channel.subscription.gift` | Подаренная подписка |
+| `channel.raid` | Рейд на канал |
+| `stream.online` | Стрим начался |
+| `stream.offline` | Стрим закончился |
 
 ---
 
@@ -188,8 +204,6 @@ docker-compose down
 | `LOG_LEVEL` | Уровень логирования | `INFO` |
 | `LOG_ROTATION` | Ротация логов | `10MB` |
 | `LOG_RETENTION` | Хранение логов | `7 days` |
-| `RATE_LIMIT_GLOBAL` | Глобальный лимит | `30` |
-| `RATE_LIMIT_USER` | Лимит на пользователя | `15` |
 
 ### Конфиги плагинов
 
