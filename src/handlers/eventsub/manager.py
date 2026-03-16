@@ -34,6 +34,18 @@ class EventSubManager:
 
         self._eventsub = EventSubWebsocket(self._twitch)
 
+        try:
+            self._eventsub.start()
+            logger.info("EventSub starting, waiting for connection...")
+        except Exception as e:
+            logger.error(f"EventSub failed to start: {e}")
+            return
+
+        while not self._eventsub.active_session:
+            await asyncio.sleep(0.1)
+
+        logger.info(f"EventSub connected with session: {self._eventsub.active_session.id}")
+
         for channel in self._channels:
             user = await first(self._twitch.get_users(logins=[channel]))
             if not user:
@@ -65,12 +77,6 @@ class EventSubManager:
                 logger.info(f"EventSub subscribed to events for {channel}")
             except Exception as e:
                 logger.exception(e)
-
-        try:
-            self._eventsub.start()
-            logger.info("EventSub started")
-        except Exception as e:
-            logger.error(f"EventSub failed to start: {e}")
 
     async def stop(self):
         if self._eventsub:
