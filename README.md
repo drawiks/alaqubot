@@ -116,17 +116,17 @@ alaqubot/
 │   │   ├── main/
 │   │   └── utility/
 │   ├── handlers/               # Обработчики событий
-│   │   ├── events/            # Chat события (message, ready)
-│   │   └── eventsub/         # EventSub события (follow, subscribe, raid, stream)
-│   ├── services/              # Бизнес-логика
-│   │   ├── plugin_manager.py  # Управление плагинами
-│   │   ├── auth.py           # Аутентификация
-│   │   └── cooldown.py       # Кулдаун команд
-│   ├── adapters/             # API клиенты
+│   │   ├── events/             # Chat события (message, ready)
+│   │   └── eventsub/           # EventSub события (follow, subscribe, raid, stream)
+│   ├── services/               # Бизнес-логика
+│   │   ├── plugin_manager.py   # Управление плагинами
+│   │   ├── auth.py             # Аутентификация
+│   │   └── cooldown.py         # Кулдаун команд
+│   ├── adapters/               # API клиенты
 │   │   ├── api/
 │   │   └── twitch/
-│   └── utils/                # Утилиты
-├── alaqubot.py                # Точка входа
+│   └── utils/                  # Утилиты
+├── alaqubot.py                 # Точка входа
 ├── Dockerfile
 ├── docker-compose.yml
 └── requirements.txt
