@@ -4,6 +4,7 @@ from typing import Callable
 from twitchAPI.eventsub.websocket import EventSubWebsocket
 from twitchAPI.helper import first
 
+from src.config import BOT_ID
 from src.utils.logger import logger
 
 
@@ -39,27 +40,27 @@ class EventSubManager:
                 logger.warning(f"EventSub channel {channel} not found")
                 continue
 
-            user_id = user.id
+            broadcaster_id = user.id
 
             try:
                 await self._eventsub.listen_channel_follow_v2(
-                    user_id, user_id, self._create_wrapper("follow")
+                    broadcaster_id, BOT_ID, self._create_wrapper("follow")
                 )
                 await self._eventsub.listen_channel_subscribe(
-                    user_id, self._create_wrapper("subscribe")
+                    broadcaster_id, self._create_wrapper("subscribe")
                 )
                 await self._eventsub.listen_channel_subscription_gift(
-                    user_id, self._create_wrapper("gift")
+                    broadcaster_id, self._create_wrapper("gift")
                 )
                 await self._eventsub.listen_channel_raid(
                     callback=self._create_wrapper("raid"),
-                    to_broadcaster_user_id=user_id,
+                    to_broadcaster_user_id=broadcaster_id,
                 )
                 await self._eventsub.listen_stream_online(
-                    user_id, self._create_wrapper("stream_online")
+                    broadcaster_id, self._create_wrapper("stream_online")
                 )
                 await self._eventsub.listen_stream_offline(
-                    user_id, self._create_wrapper("stream_offline")
+                    broadcaster_id, self._create_wrapper("stream_offline")
                 )
                 logger.info(f"EventSub subscribed to events for {channel}")
             except Exception as e:
