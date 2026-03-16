@@ -34,7 +34,7 @@ class EventSubManager:
         self._eventsub = EventSubWebsocket(self._twitch)
 
         for channel in self._channels:
-            user = await first(self._twitch.get_users(logins=channel))
+            user = await first(self._twitch.get_users(logins=[channel]))
             if not user:
                 logger.warning(f"EventSub channel {channel} not found")
                 continue
