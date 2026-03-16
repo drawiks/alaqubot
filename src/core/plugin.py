@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from src.adapters.api.client import APIClient
@@ -15,7 +15,7 @@ class Plugin(ABC):
         api_client: "APIClient",
         config: dict,
         users: list[str],
-        twitch_client: Optional["TwitchClient"] = None,
+        twitch_client: "TwitchClient | None" = None,
     ):
         self._api = api_client
         self._config = config
@@ -31,7 +31,7 @@ class Plugin(ABC):
         return self._api
 
     @property
-    def twitch(self) -> Optional["TwitchClient"]:
+    def twitch(self) -> "TwitchClient | None":
         return self._twitch
 
     @property

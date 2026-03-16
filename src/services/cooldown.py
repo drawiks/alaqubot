@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Optional
 import time
 import threading
 
@@ -12,7 +11,7 @@ class CooldownEntry:
 
 
 class CooldownService:
-    _instance: Optional["CooldownService"] = None
+    _instance: "CooldownService | None" = None
     _lock = threading.Lock()
 
     def __new__(cls) -> "CooldownService":

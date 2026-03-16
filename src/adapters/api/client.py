@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 import asyncio
 import httpx
 
@@ -31,7 +31,7 @@ class APIClient:
                     await asyncio.sleep(delay)
         logger.error("Failed to load data after retries")
 
-    async def _async_data(self, endpoint: str) -> Optional[dict]:
+    async def _async_data(self, endpoint: str) -> dict | None:
         response = await self.client.get(f"{self.BASE_URL}/data/{endpoint}", timeout=5)
         if response.status_code == 200:
             return response.json()

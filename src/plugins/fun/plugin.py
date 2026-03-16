@@ -38,7 +38,7 @@ class FunPlugin(Plugin):
 
     @staticmethod
     async def spin(cmd):
-        symbols = ["🍎", "🍒", "🍌", "🍉", "⭐"]
+        symbols = ["🍋", "🍇", "🍒", "🍌", "🍉", "⭐️"]
 
         if choice([True, False]):
             symbol = choice(symbols)
@@ -52,7 +52,7 @@ class FunPlugin(Plugin):
         await cmd.reply(str(randint(0, 100)))
 
     async def zone(self, cmd):
-        words = self.settings.get("zones", [])
+        words = self.settings.get("words", [])
         await cmd.reply(choice(words) if words else "тихоня")
 
     @staticmethod

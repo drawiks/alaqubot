@@ -61,18 +61,31 @@ class MainPlugin(Plugin):
         await cmd.reply(reply)
 
     async def tg(self, cmd):
-        if len(cmd.parameter) == 0:
+        if not cmd.parameter:
             if cmd.room:
                 channel = self.client.commands.get(cmd.room.name, {})
-                await cmd.reply(channel.get("тг"))
+                link = channel.get("тг")
+                if link:
+                    await cmd.reply(link)
         else:
             if cmd.room:
                 channel = self.client.commands.get(cmd.room.name, {})
-                if int(cmd.parameter) <= 5:
-                    for _ in range(int(cmd.parameter)):
-                        await cmd.reply(channel.get("тг"))
-                else:
-                    await cmd.reply("Дохуя просишь братик)")
+                link = channel.get("тг")
+                if not link:
+                    await cmd.reply("Ссылка не настроена")
+                    return
+                try:
+                    count = int(cmd.parameter)
+                    if count <= 0:
+                        await cmd.reply("Введи число больше 0!")
+                        return
+                    if count > 5:
+                        await cmd.reply("Дохуя просишь братик)")
+                        return
+                    for _ in range(count):
+                        await cmd.reply(link)
+                except ValueError:
+                    await cmd.reply("Введи число!")
 
     @staticmethod
     async def author(cmd):
@@ -87,9 +100,13 @@ class MainPlugin(Plugin):
     async def guide(self, cmd):
         if cmd.room:
             channel = self.client.commands.get(cmd.room.name, {})
-            await cmd.reply(channel.get("гайд"))
+            text = channel.get("гайд")
+            if text:
+                await cmd.reply(text)
 
     async def main(self, cmd):
         if cmd.room:
             channel = self.client.commands.get(cmd.room.name, {})
-            await cmd.reply(channel.get("мейн"))
+            text = channel.get("мейн")
+            if text:
+                await cmd.reply(text)

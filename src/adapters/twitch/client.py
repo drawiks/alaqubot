@@ -2,7 +2,7 @@ from twitchAPI.twitch import Twitch
 from twitchAPI.type import AuthScope, ChatEvent
 from twitchAPI.chat import Chat
 from twitchAPI.helper import first
-from typing import Callable, Any, Optional
+from typing import Callable, Any
 import asyncio
 
 from src.utils.logger import logger
@@ -16,21 +16,21 @@ class TwitchClient:
         client_id: str,
         client_secret: str,
         auth_service: AuthService,
-        scope: Optional[list[AuthScope]] = None,
+        scope: list[AuthScope] | None = None,
     ) -> None:
         self._client_id = client_id
         self._client_secret = client_secret
         self._auth_service = auth_service
         self._scope = scope or DEFAULT_SCOPES
 
-        self._twitch: Optional[Twitch] = None
-        self._chat: Optional[Chat] = None
-        self._stop_event: Optional[asyncio.Event] = None
+        self._twitch: Twitch | None = None
+        self._chat: Chat | None = None
+        self._stop_event: asyncio.Event | None = None
         self._event_handlers: dict = {}
         self._command_handlers: dict = {}
 
     @property
-    def chat(self) -> Optional[Chat]:
+    def chat(self) -> Chat | None:
         return self._chat
 
     async def initialize(self) -> None:
@@ -96,7 +96,7 @@ class TwitchClient:
         self._event_handlers.clear()
         self._command_handlers.clear()
 
-    async def get_bot_email(self) -> Optional[str]:
+    async def get_bot_email(self) -> str | None:
         if not self._twitch:
             return None
         user = await first(self._twitch.get_users())

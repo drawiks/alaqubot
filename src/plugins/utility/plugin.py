@@ -63,14 +63,18 @@ class UtilityPlugin(Plugin):
         ]
 
     async def converter(self, cmd):
-        if len(cmd.parameter) == 0:
+        if not cmd.parameter:
             result = await self.client.request("currency")
         else:
-            result = await self.client.request("currency", float(cmd.parameter))
+            try:
+                result = await self.client.request("currency", float(cmd.parameter))
+            except ValueError:
+                await cmd.reply("Введи число!")
+                return
         await cmd.reply(result)
 
     async def weather(self, cmd):
-        if len(cmd.parameter) == 0:
+        if not cmd.parameter:
             await cmd.reply("Введи название города!")
         else:
             result = await self.client.request("weather", cmd.parameter)
@@ -81,10 +85,16 @@ class UtilityPlugin(Plugin):
         await cmd.reply(result)
 
     async def wl(self, cmd):
+        if not cmd.room:
+            await cmd.reply("Не могу определить канал!")
+            return
         result = await self.client.request("wl", str(cmd.room.name))
         await cmd.reply(result)
 
     async def mmr(self, cmd):
+        if not cmd.room:
+            await cmd.reply("Не могу определить канал!")
+            return
         result = await self.client.request("get_mmr", str(cmd.room.name))
         await cmd.reply(result)
 
@@ -93,26 +103,36 @@ class UtilityPlugin(Plugin):
             await cmd.reply("У тебя нет прав на эту команду!")
             return
 
-        if cmd.parameter.lstrip("-").isdigit():
-            response = await self.client.post_request(
-                "set_mmr", {"username": cmd.room.name, "mmr": cmd.parameter}
-            )
-            await cmd.reply(response)
-        else:
+        if not cmd.room:
+            await cmd.reply("Не могу определить канал!")
+            return
+
+        if not cmd.parameter or not cmd.parameter.lstrip("-").isdigit():
             await cmd.reply("Введи число!")
+            return
+
+        response = await self.client.post_request(
+            "set_mmr", {"username": cmd.room.name, "mmr": cmd.parameter}
+        )
+        await cmd.reply(response)
 
     async def set_id(self, cmd):
         if not self.check_permission(cmd.user.name):
             await cmd.reply("У тебя нет прав на эту команду!")
             return
 
-        if cmd.parameter.lstrip("-").isdigit():
-            response = await self.client.post_request(
-                "set_id", {"username": cmd.room.name, "dota_id": cmd.parameter}
-            )
-            await cmd.reply(response)
-        else:
+        if not cmd.room:
+            await cmd.reply("Не могу определить канал!")
+            return
+
+        if not cmd.parameter or not cmd.parameter.lstrip("-").isdigit():
             await cmd.reply("Введи айди!")
+            return
+
+        response = await self.client.post_request(
+            "set_id", {"username": cmd.room.name, "dota_id": cmd.parameter}
+        )
+        await cmd.reply(response)
 
     async def uptime(self, cmd):
         if not self.check_permission(cmd.user.name):

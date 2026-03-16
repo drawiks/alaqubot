@@ -1,5 +1,5 @@
 from twitchAPI.chat import ChatMessage
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 import time
 
 from src.utils.logger import logger
@@ -27,12 +27,16 @@ def _check_global_limit() -> bool:
     return True
 
 
-async def on_message(msg: ChatMessage, client: Optional["APIClient"]) -> None:
+async def on_message(msg: ChatMessage, client: "APIClient | None") -> None:
     global _user_cooldowns
 
     logger.trace(
         f"|room - {msg.room.name if msg.room else ''}| {msg.user.name}: {msg.text}"
     )
+
+    if client is None:
+        logger.warning("API client not available")
+        return
 
     now = time.time()
     expired = [u for u, t in _user_cooldowns.items() if now - t >= USER_COOLDOWN]
@@ -54,12 +58,12 @@ async def on_message(msg: ChatMessage, client: Optional["APIClient"]) -> None:
         if not text:
             return
 
-        response = await client.post_request("groq", {"text": text})  # type: ignore[union-attr]
-        if msg.room:
-            await msg.chat.send_message(msg.room.name, f"@{msg.user.name} {response}")  # type: ignore[union-attr]
-
-
-def cleanup() -> None:
-    global _user_cooldowns, _global_requests
-    _user_cooldowns.clear()
-    _global_requests.clear()
+        try:
+            response = await client.post_request("groq", {"text": text})
+            if msg.room:
+                await msg.chat.send_message(
+                    msg.room.name, f"@{msg.user.name} {response}"
+                )
+        except Exception as e:
+            logger.error(f"Error processing message: {e}")
+            await msg.reply("Произошла ошибка, попробуй позже")

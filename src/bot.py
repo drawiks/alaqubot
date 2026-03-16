@@ -2,7 +2,6 @@ import asyncio
 import os
 from pathlib import Path
 from functools import partial
-from typing import Optional
 
 from twitchAPI.type import ChatEvent, TwitchBackendException
 
@@ -23,21 +22,25 @@ from src.services.plugin_manager import PluginManager
 
 from src.handlers.events import on_message as message_handler, on_ready
 
+from src.handlers.eventsub import EventSubManager
+from src.handlers.eventsub import follow, subscribe, gift, raid, stream
+
 from src.utils.logger import logger
 
 
 class Bot:
-    _api_client: Optional[APIClient]
-    _twitch_client: Optional[TwitchClient]
-    _auth_service: Optional[AuthService]
-    _cooldown_service: Optional[CooldownService]
-    _plugin_manager: Optional[PluginManager]
+    _api_client: APIClient | None
+    _twitch_client: TwitchClient | None
+    _auth_service: AuthService | None
+    _cooldown_service: CooldownService | None
+    _plugin_manager: PluginManager | None
+    _eventsub_manager: EventSubManager | None
 
     def __init__(
-        self, shutdown_event: asyncio.Event, api_client: Optional[APIClient] = None
+        self, shutdown_event: asyncio.Event, api_client: APIClient | None = None
     ) -> None:
         self._shutdown_event = shutdown_event
-        self._stop_event: Optional[asyncio.Event] = None
+        self._stop_event: asyncio.Event | None = None
         self._api_client_provided = api_client is not None
         object.__setattr__(self, "_api_client", api_client)
 
@@ -75,7 +78,10 @@ class Bot:
         )
 
     def _create_plugin_manager(
-        self, api_client: APIClient, twitch_client: TwitchClient, cooldown: CooldownService
+        self,
+        api_client: APIClient,
+        twitch_client: TwitchClient,
+        cooldown: CooldownService,
     ) -> PluginManager:
         return PluginManager(api_client, twitch_client, cooldown)
 
@@ -114,9 +120,29 @@ class Bot:
         self._twitch_client.set_stop_event(self._stop_event)  # type: ignore[arg-type]
         await self._twitch_client.start()  # type: ignore[arg-type]
 
+        self._eventsub_manager = EventSubManager(
+            self._twitch_client._twitch,  # type: ignore[attr-defined]
+            CHANNELS,
+            self._twitch_client.chat,  # type: ignore[attr-defined]
+        )
+        self._eventsub_manager.register_callback("follow", follow.on_follow)
+        self._eventsub_manager.register_callback("subscribe", subscribe.on_subscribe)
+        self._eventsub_manager.register_callback("gift", gift.on_gift)
+        self._eventsub_manager.register_callback("raid", raid.on_raid)
+        self._eventsub_manager.register_callback(
+            "stream_online", stream.on_stream_online
+        )
+        self._eventsub_manager.register_callback(
+            "stream_offline", stream.on_stream_offline
+        )
+        await self._eventsub_manager.start()
+
     async def _cleanup(self) -> None:
         if self._stop_event:
             self._stop_event.set()
+
+        if self._eventsub_manager:
+            await self._eventsub_manager.stop()
 
         if self._plugin_manager:
             await self._plugin_manager.unload_all()

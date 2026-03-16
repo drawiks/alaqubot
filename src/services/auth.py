@@ -1,19 +1,18 @@
 import httpx
 from pathlib import Path
-from typing import Optional
 from src.utils.logger import logger
 
 
 class AuthService:
-    _instance: Optional["AuthService"] = None
+    _instance: "AuthService | None" = None
     _initialized: bool = False
 
-    def __init__(self, env_path: Optional[Path] = None) -> None:
+    def __init__(self, env_path: Path | None = None) -> None:
         if self._initialized:
             return
         self._env_path = env_path
-        self._token: Optional[str] = None
-        self._refresh_token: Optional[str] = None
+        self._token: str | None = None
+        self._refresh_token: str | None = None
         self._initialized = True
 
     def load_tokens(self, token: str, refresh_token: str) -> None:

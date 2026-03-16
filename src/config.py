@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import yaml
 from environs import Env

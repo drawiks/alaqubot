@@ -2,7 +2,6 @@ import importlib
 import os
 from functools import wraps
 from pathlib import Path
-from typing import Optional
 
 from src.core.plugin import Plugin
 from src.services.cooldown import CooldownService
@@ -21,7 +20,8 @@ class PluginManager:
         self._cooldown = cooldown_service
         self._plugins: dict[str, Plugin] = {}
 
-    def discover(self) -> list[str]:
+    @staticmethod
+    def discover() -> list[str]:
         plugins_path = Path(__file__).parent.parent / "plugins"
         if not plugins_path.exists():
             return []
@@ -32,7 +32,7 @@ class PluginManager:
             if (plugins_path / name / "plugin.py").exists() and not name.startswith("_")
         ]
 
-    def load(self, name: str) -> Optional[Plugin]:
+    def load(self, name: str) -> Plugin | None:
         from src.config import get_plugin_config
 
         try:
@@ -110,5 +110,3 @@ class PluginManager:
 
     def get_plugins(self) -> dict[str, Plugin]:
         return self._plugins
-
-
